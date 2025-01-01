@@ -1,1 +1,47 @@
-file:///C:/Users/owlba/Downloads/Capitian%20Centrva.html#
+# Capetain Cetriva
+
+// ...existing content...
+
+## URL Encoding
+
+URL encoding, also known as percent encoding, is a mechanism for encoding information in a Uniform Resource Identifier (URI). It is used to encode characters that may not be allowed in a URL or that have special meanings in a URL.
+
+### Reserved Characters
+
+Characters such as `:`, `/`, `?`, `#`, `[`, `]`, `@`, `!`, `$`, `&`, `'`, `(`, `)`, `*`, `+`, `,`, `;`, `=` are reserved for special purposes in URLs. If these characters need to be included in a URL as data, they must be encoded.
+
+### Non-ASCII Characters
+
+Characters outside the ASCII set (e.g., characters with accents, non-Latin characters) must be encoded.
+
+### Space
+
+The space character is encoded as `%20` or `+`.
+
+### Encoding Process
+
+Each character is converted to its corresponding ASCII value, and then represented as a percent sign `%` followed by two hexadecimal digits.
+
+For example:
+
+- The space character `` is encoded as `%20`.
+- The character `#` is encoded as `%23`.
+- The character `?` is encoded as `%3F`.
+
+### Example
+
+Here is an example of a URL before and after encoding:
+
+**Before Encoding:**
+
+```plaintext
+https://example.com/path/to resource?name=John Doe&age=30
+```
+
+**After Encoding:**
+
+```plaintext
+https://example.com/path/to%20resource?name=John%20Doe&age=30
+```
+
+In the provided URL `file:///C:/Users/owlba/Downloads/Capitian%20Centrva.html#`, the space character in the file name is correctly encoded as `%20`. The `#` at the end is a fragment identifier, which is used to specify a section within the resource. If it is not needed, it can be removed.
