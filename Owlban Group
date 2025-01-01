@@ -45,3 +45,97 @@ https://example.com/path/to%20resource?name=John%20Doe&age=30
 ```
 
 In the provided URL `file:///C:/Users/owlba/Downloads/Capitian%20Centrva.html#`, the space character in the file name is correctly encoded as `%20`. The `#` at the end is a fragment identifier, which is used to specify a section within the resource. If it is not needed, it can be removed.
+
+### Investment Fund
+
+An investment fund is a way of investing money alongside other investors in order to benefit from the inherent advantages of working as part of a group. These advantages include an ability to:
+
+- Hire professional investment managers, who may offer better returns and more adequate risk management.
+- Benefit from economies of scale, i.e., lower transaction costs.
+- Increase the asset diversification to reduce some unsystematic risk.
+
+### Types of Investment Funds
+
+1. **Mutual Funds**: Pooled funds from many investors to purchase securities.
+2. **Exchange-Traded Funds (ETFs)**: Traded on stock exchanges, much like stocks.
+3. **Hedge Funds**: Private, actively managed investment funds.
+4. **Pension Funds**: Retirement funds that are invested on behalf of employees.
+// JavaScript example to decode a URL
+const encodedURL = "<https://example.com/path/to%20resource?name=John%20Doe&age=30>";
+const decodedURL = decodeURIComponent(encodedURL);
+
+console.log(decodedURL); // Output: `https://example.com/path/to resource?name=John Doe&age=30`
+
+### Python Example to Decode a URL
+
+```python
+import urllib.parse
+
+encoded_url = "https://example.com/path/to%20resource?name=John%20Doe&age=30"
+decoded_url = urllib.parse.unquote(encoded_url)
+
+print(decoded_url)  # Output: https://example.com/path/to resource?name=John Doe&age=30
+```
+
+import urllib.parse
+
+encoded_url = "<https://example.com/path/to%20resource?name=John%20Doe&age=30>"
+decoded_url = urllib.parse.unquote(encoded_url)
+
+print(decoded_url)  # Output: <https://example.com/path/to> resource?name=John Doe&age=30### Decoding URLs
+
+To decode a URL, you can use various methods depending on the programming language or tool you are using. Here are examples in JavaScript and Python:
+
+**JavaScript:**
+
+```javascript
+const encodedURL = "https://example.com/path/to%20resource?name=John%20Doe&age=30";
+const decodedURL = decodeURIComponent(encodedURL);
+
+console.log(decodedURL); // Output: https://example.com/path/to resource?name=John Doe&age=30import urllib.parse
+
+encoded_url = "https://example.com/path/to%20resource?name=John%20Doe&age=30"
+decoded_url = urllib.parse.unquote(encoded_url)
+
+print(decoded_url)  # Output: https://example.com/path/to resource?name=John Doe&age=30# Capetain Cetriva
+
+// ...existing content...
+
+## Investment Fund
+
+An investment fund is a way of investing money alongside other investors in order to benefit from the inherent advantages of working as part of a group. These advantages include an ability to:
+
+- Hire professional investment managers, who may offer better returns and more adequate risk management.
+- Benefit from economies of scale, i.e., lower transaction costs.
+- Increase the asset diversification to reduce some unsystematic risk.
+
+### Types of Investment Funds
+
+1. **Mutual Funds**: Pooled funds from many investors to purchase securities.
+2. **Exchange-Traded Funds (ETFs)**: Traded on stock exchanges, much like stocks.
+3. **Hedge Funds**: Private, actively managed investment funds.
+4. **Pension Funds**: Retirement funds that are invested on behalf of employees.
+
+## Decoding URLs
+
+To decode a URL, you can use various methods depending on the programming language or tool you are using. Here are examples in JavaScript and Python:
+
+**JavaScript:**
+
+```javascript
+const encodedURL = "https://example.com/path/to%20resource?name=John%20Doe&age=30";
+const decodedURL = decodeURIComponent(encodedURL);
+
+console.log(decodedURL); // Output: https://example.com/path/to resource?name=John Doe&age=30
+```
+
+**Python:**
+
+```python
+import urllib.parse
+
+encoded_url = "https://example.com/path/to%20resource?name=John%20Doe&age=30"
+decoded_url = urllib.parse.unquote(encoded_url)
+
+print(decoded_url)  # Output: https://example.com/path/to resource?name=John Doe&age=30
+```
