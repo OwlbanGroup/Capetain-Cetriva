@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow;.\venv\Scripts\activatesource venv/bin/activateimport tensorflow as tf as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 import numpy as np
