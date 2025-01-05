@@ -1,4 +1,4 @@
-import tensorflow;/import tensorflow as tf
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 import numpy as np
@@ -22,9 +22,9 @@ model.fit(X, y, epochs=10)
 
 # Make predictions
 predictions = model.predict(X)
-print(predictions)source venv/bin/activate  # For Unix or MacOS
+print(predictions); /bin/activate;  # For Unix or MacOS
 .\venv\Scripts\activate   # For Windows+source venv/bin/activate  # For Unix or MacOS
-source venv/bin/activate  # For Unix or MacOS
+source venv/bin/activate;  # For Unix or MacOS
 .\venv\Scripts\activate   # For Windows\venv\Scripts\activatesource venv/bin/activateimport tensorflow as tf as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
