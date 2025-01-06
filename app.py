@@ -1,5 +1,5 @@
-import tensorflow im, inst.\venv\Scripts\source venv/bin/import tensorflow as tfs capitian cetriva
 from tensorflow.keras.models import Sequential
+import tensorflow im; inst; \venv\Scripts\source venv/bin/import tensorflow as tfs capitian cetriva
 from tensorflow.keras.layers import Dense
 import numpy as np
 
