@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow pip inst.\venv\Scripts\source venv/bin/import tensorflow as tfs capitian cetriva
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 import numpy as np
