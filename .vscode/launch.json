@@ -21,7 +21,9 @@
             }
         },
         {
-            "type": "python",
+                        import tensorflow as tf
+            
+            # ...existing code...,
             "name": "Launch Python",
             "request": "launch",
             "program": "${workspaceFolder}/app.py",
