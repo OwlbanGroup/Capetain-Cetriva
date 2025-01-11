@@ -1,6 +1,6 @@
-from tensorflow.keras.models import Sequential
 import tensorflow as tf
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense # type: ignore
 import numpy as np
 
 # Define a simple model
@@ -22,4 +22,7 @@ model.fit(X, y, epochs=10)
 
 # Make predictions
 predictions = model.predict(X)
-print(predictions)
+
+# Format and print predictions
+for i, prediction in enumerate(predictions):
+    print(f"Prediction for input {X[i]}: {prediction[0]}")
