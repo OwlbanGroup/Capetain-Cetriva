@@ -9,7 +9,8 @@ from fund_in_a_box import setup_fund  # Import the new module
 # Initialize the application
 def main():
     print("Starting Capetain-Cetriva application...")
-    setup_fund()  # Call the function to set up the fund
+    print("Setting up Hybrid Fund...")
+    setup_fund()  # Call the function to set up the Hybrid Fund
 
 if __name__ == "__main__":
     main()
