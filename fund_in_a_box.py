@@ -4,7 +4,11 @@
 import logging
 from model_setup import model  # Import the AI model
 import numpy as np  # Ensure this import is not commented out
-from tensorflow.keras.models import load_model  # Add this import
+
+try:
+    from tensorflow.keras.models import load_model  # Add this import
+except ImportError:
+    print("Error: tensorflow.keras.models could not be resolved. Please ensure TensorFlow is installed.")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -37,8 +41,13 @@ def setup_fund(initial_allocations=None):
         for asset, allocation in initial_allocations.items():
             logging.info(f"AI-adjusted allocation: {allocation * 100}% to {asset}.")
         
-        # Add actual implementation here to interact with the Fund in a Box service
-        logging.info("Hybrid Fund setup completed successfully with AI-driven allocations.")
+        # Actual implementation to interact with the Fund in a Box service
+        # Example interaction (this should be replaced with actual API calls)
+        response = some_api_call_to_fund_in_a_box_service(initial_allocations)
+        if response.status_code == 200:
+            logging.info("Hybrid Fund setup completed successfully with AI-driven allocations.")
+        else:
+            logging.error("Failed to set up Hybrid Fund: " + response.text)
     except Exception as e:
         logging.error(f"An error occurred while setting up the Hybrid Fund: {e}")
 
