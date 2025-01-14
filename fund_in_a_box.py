@@ -5,6 +5,9 @@ import logging
 from model_setup import model  # Import the AI model
 import numpy as np  # Ensure this import is not commented out
 
+# Ensure you have TensorFlow installed: pip install tensorflow
+from tensorflow.keras.models import Model
+
 try:
     from tensorflow.keras.models import load_model  # Add this import
 except ImportError:
