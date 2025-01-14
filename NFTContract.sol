@@ -7,8 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract CapetainCetrivaNFT is ERC721, Ownable {
     uint256 public nextTokenId;
     string public baseTokenURI;
-    mapping(uint256 => uint256) public tokenValues;
-    uint256 public totalValue;
 
     constructor(string memory _baseTokenURI) ERC721("CapetainCetrivaNFT", "CCTNFT") {
         baseTokenURI = _baseTokenURI;
@@ -16,8 +14,6 @@ contract CapetainCetrivaNFT is ERC721, Ownable {
 
     function mint(address to) external onlyOwner {
         _safeMint(to, nextTokenId);
-        tokenValues[nextTokenId] = 250000 * 10**18; // Assuming 18 decimal places for the value
-        totalValue += 250000 * 10**18; // Update total value
         nextTokenId++;
     }
 
@@ -27,24 +23,12 @@ contract CapetainCetrivaNFT is ERC721, Ownable {
 
     function mintCoetusAppNFT(address fundAddress) external onlyOwner {
         _safeMint(fundAddress, nextTokenId);
-        tokenValues[nextTokenId] = 250000 * 10**18;
-        totalValue += 250000 * 10**18; // Update total value
         nextTokenId++;
     }
 
     function mintOwlbanGroupNFT(address fundAddress) external onlyOwner {
         _safeMint(fundAddress, nextTokenId);
-        tokenValues[nextTokenId] = 250000 * 10**18;
-        totalValue += 250000 * 10**18; // Update total value
         nextTokenId++;
-    }
-
-    function getTokenValue(uint256 tokenId) external view returns (uint256) {
-        return tokenValues[tokenId];
-    }
-
-    function getTotalValue() external view returns (uint256) {
-        return totalValue;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
