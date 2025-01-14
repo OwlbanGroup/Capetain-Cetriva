@@ -34,4 +34,20 @@ contract CapetainCetrivaNFT is ERC721, Ownable {
 
     function mintOwlbanGroupNFT(address fundAddress) external onlyOwner {
         _safeMint(fundAddress, nextTokenId);
+        tokenValues[nextTokenId] = 250000 * 10**18;
+        totalValue += 250000 * 10**18; // Update total value
+        nextTokenId++;
+    }
+
+    function getTokenValue(uint256 tokenId) external view returns (uint256) {
+        return tokenValues[tokenId];
+    }
+
+    function getTotalValue() external view returns (uint256) {
+        return totalValue;
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return baseTokenURI;
+    }
 }
