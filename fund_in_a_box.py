@@ -17,8 +17,6 @@ def setup_fund(initial_allocations=None):
     try:
         logging.info("Setting up Hybrid Fund using Fund in a Box service with AI...")
         
-        logging.info("Setting up Hybrid Fund using Fund in a Box service with AI...")
-        
         # Define initial asset allocations if not provided
         if initial_allocations is None:
             initial_allocations = {
