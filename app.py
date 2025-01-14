@@ -3,6 +3,8 @@ from flask import Flask, render_template, request
 import numpy as np
 from fund_in_a_box import setup_fund
 from model_setup import model, train_model
+import uuid
+from web3 import Web3
 
 # Configure logging
 logging.basicConfig(
@@ -12,6 +14,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# In-memory storage for minted NFTs
+minted_nfts = {}
+
+# Connect to Ethereum network (replace with your Infura URL or local node)
+w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'))
 
 @app.route('/')
 def index():
@@ -48,10 +56,18 @@ def setup_fund_route():
 def mint_nft():
     """Handle the NFT minting request."""
     try:
-        # Placeholder logic for minting an NFT
+        # Generate a unique NFT ID
+        nft_id = str(uuid.uuid4())
         nft_value = 250000
-        logger.info(f"Minting NFT with value: ${nft_value}")
-        return f"NFT minted successfully with a preset value of ${nft_value}!"
+
+        # Placeholder logic for minting an NFT
+        logger.info(f"Minting NFT with ID: {nft_id} and value: ${nft_value}")
+
+        # Here you would include the logic to mint the NFT on the blockchain
+        # For example, you would create a transaction to call the mint function of your NFT contract
+
+        minted_nfts[nft_id] = nft_value
+        return f"NFT minted successfully! ID: {nft_id}, Value: ${nft_value}"
     except Exception as e:
         logger.error(f"Error during NFT minting: {str(e)}")
         return "An error occurred during NFT minting. Please try again later.", 500
