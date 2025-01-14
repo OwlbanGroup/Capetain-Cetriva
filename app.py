@@ -21,6 +21,13 @@ minted_nfts = {}
 # Connect to Ethereum network (replace with your Infura URL or local node)
 w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'))
 
+# Replace with your deployed contract address and ABI
+CONTRACT_ADDRESS = '0xYourContractAddress'
+CONTRACT_ABI = [...]  # Replace with your contract ABI
+
+# Load the contract
+contract = w3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
+
 @app.route('/')
 def index():
     """Render the main index page."""
@@ -38,14 +45,8 @@ def setup_fund_route():
         historical_data = np.array([[0.5, 0.3, 0.2], [0.6, 0.2, 0.2]])
         labels = np.array([[1, 0, 0], [0, 1, 0]])
 
-        # Train the model on historical data
-        logger.info("Training model...")
-        train_model(historical_data, labels)
+        # ...existing code...
 
-        # Set up the Hybrid Fund
-        logger.info("Setting up fund...")
-        setup_fund()
-        
         logger.info("Fund setup completed successfully")
         return "Hybrid Fund setup completed!"
     except Exception as e:
@@ -65,6 +66,30 @@ def mint_nft():
 
         # Here you would include the logic to mint the NFT on the blockchain
         # For example, you would create a transaction to call the mint function of your NFT contract
+
+        minted_nfts[nft_id] = nft_value
+        return f"NFT minted successfully! ID: {nft_id}, Value: ${nft_value}"
+    except Exception as e:
+        logger.error(f"Error during NFT minting: {str(e)}")
+        return "An error occurred during NFT minting. Please try again later.", 500
+
+if __name__ == "__main__":
+    logger.info("Starting application...")
+    app.run(host='0.0.0.0', port=5000, debug=True)
+        txn = contract.functions.mint(wallet_address).build_transaction({
+
+            'chainId': 1,  # Mainnet
+            'gas': 2000000,
+            'gasPrice': w3.to_wei('50', 'gwei'),
+            'nonce': nonce,
+        })
+
+        # Sign the transaction
+        signed_txn = w3.eth.account.sign_transaction(txn, private_key=private_key)
+
+        # Send the transaction
+        txn_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+        txn_receipt = w3.eth.wait_for_transaction_receipt(txn_hash)
 
         minted_nfts[nft_id] = nft_value
         return f"NFT minted successfully! ID: {nft_id}, Value: ${nft_value}"
