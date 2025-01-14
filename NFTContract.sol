@@ -17,6 +17,20 @@ contract CapetainCetrivaNFT is ERC721, Ownable {
         nextTokenId++;
     }
 
+    function ownerOfToken(uint256 tokenId) external view returns (address) {
+        return ownerOf(tokenId);
+    }
+
+    function mintCoetusAppNFT(address fundAddress) external onlyOwner {
+        _safeMint(fundAddress, nextTokenId);
+        nextTokenId++;
+    }
+
+    function mintOwlbanGroupNFT(address fundAddress) external onlyOwner {
+        _safeMint(fundAddress, nextTokenId);
+        nextTokenId++;
+    }
+
     function _baseURI() internal view virtual override returns (string memory) {
         return baseTokenURI;
     }
