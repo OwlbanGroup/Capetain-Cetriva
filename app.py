@@ -44,6 +44,18 @@ def setup_fund_route():
         logger.error(f"Error during fund setup: {str(e)}")
         return "An error occurred during fund setup. Please try again later.", 500
 
+@app.route('/mint_nft', methods=['POST'])
+def mint_nft():
+    """Handle the NFT minting request."""
+    try:
+        # Placeholder logic for minting an NFT
+        nft_value = 250000
+        logger.info(f"Minting NFT with value: ${nft_value}")
+        return f"NFT minted successfully with a preset value of ${nft_value}!"
+    except Exception as e:
+        logger.error(f"Error during NFT minting: {str(e)}")
+        return "An error occurred during NFT minting. Please try again later.", 500
+
 if __name__ == "__main__":
     logger.info("Starting application...")
     app.run(host='0.0.0.0', port=5000, debug=True)
