@@ -1,10 +1,16 @@
-# Capetain-Cetriva
+# Capetain-Cetriva ![GitHub Marketplace](https://img.shields.io/badge/GitHub-Marketplace-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
-Welcome to the Capetain-Cetriva repository! This project is maintained by the Owlban Group.
+Welcome to the Capetain-Cetriva repository! This project is maintained by the Owlban Group and available on the GitHub Marketplace.
 
 ## Overview
 
 Capetain-Cetriva is a Python-based project aimed at enhancing URL decoding examples and adding new features to the Owlban Group app. This repository contains the source code, documentation, and workflows for the project.
+
+## Marketplace Features
+
+- **Easy Installation**: One-click setup through GitHub Marketplace
+- **Seamless Integration**: Works with your existing GitHub workflows
+- **Reliable Support**: Backed by the Owlban Group's expertise
 
 ## Features
 
@@ -14,7 +20,13 @@ Capetain-Cetriva is a Python-based project aimed at enhancing URL decoding examp
 
 ## Getting Started
 
-To get started with Capetain-Cetriva, follow these steps:
+### Marketplace Installation
+1. Visit the [GitHub Marketplace](https://github.com/marketplace) and search for "Capetain-Cetriva"
+2. Click "Install" and follow the setup instructions
+3. Configure your repository settings as needed
+
+### Manual Installation
+To get started with Capetain-Cetriva manually, follow these steps:
 
 1. Clone the repository:
 
@@ -24,6 +36,8 @@ To get started with Capetain-Cetriva, follow these steps:
    pip install -r requirements.txt
    python app.py
    ```
+
+![Screenshot](https://via.placeholder.com/800x400.png?text=Application+Screenshot)
 
 ## Prerequisites
 
@@ -56,6 +70,17 @@ We welcome contributions to Capetain-Cetriva! If you would like to contribute, p
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
-## Contact
+## Support
 
 For any questions or inquiries, please contact the Owlban Group at <contact@owlbangroup.com>.
+
+### Documentation
+- [User Guide](https://github.com/OwlbanGroup/Capetain-Cetriva/wiki)
+- [API Reference](https://github.com/OwlbanGroup/Capetain-Cetriva/wiki/API-Reference)
+- [Troubleshooting](https://github.com/OwlbanGroup/Capetain-Cetriva/wiki/Troubleshooting)
+
+### Pricing
+Capetain-Cetriva is available in the following plans:
+- **Free Tier**: Basic features for individual users
+- **Pro Plan**: $9.99/month - Advanced features and priority support
+- **Enterprise Plan**: Custom pricing for organizations
