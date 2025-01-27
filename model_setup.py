@@ -5,10 +5,10 @@ import numpy as np
 from web3 import Web3  # Ensure this import is added
 
 # Initialize Web3 connection (replace with your Infura or local node URL)
-w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'))
+w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_NEW_INFURA_PROJECT_ID'))
 
 # Check if connected to Ethereum
-if w3.isConnected():
+if w3.is_connected():
     print("Connected to Ethereum network")
 else:
     print("Failed to connect to Ethereum network")

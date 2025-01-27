@@ -22,7 +22,7 @@ minted_nfts = {
 }
 
 # Connect to Ethereum network (replace with your Infura URL or local node)
-w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'))
+w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_NEW_INFURA_PROJECT_ID'))
 
 @app.route('/')
 def index():
@@ -35,6 +35,7 @@ def index():
 
 @app.route('/setup_fund', methods=['POST'])
 def setup_fund_route():
+    # Placeholder for Deepseek.com integration
     """Handle the fund setup request."""
     try:
         data = request.json
