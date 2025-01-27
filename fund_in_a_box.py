@@ -2,23 +2,48 @@
 # This module handles interactions with the "Fund in a Box" service from Repool.
 
 import logging
-from model_setup import model  # Import the AI model
 import numpy as np  # Ensure this import is not commented out
 
 # Ensure you have TensorFlow installed: pip install tensorflow
-from tensorflow.keras.models import Model
+import tensorflow as tf  # Ensure this import is added
+from tensorflow.keras.models import Sequential  # Ensure this import is added
+from tensorflow.keras.layers import Dense  # type: ignore
+from web3 import Web3  # Ensure this import is added
 
-try:
-    from tensorflow.keras.models import load_model  # Add this import
-except ImportError:
-    print("Error: tensorflow.keras.models could not be resolved. Please ensure TensorFlow is installed.")
+# Initialize Web3 connection (replace with your Infura or local node URL)
+w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_VALID_INFURA_PROJECT_ID'))  # Replace with your actual Infura project ID
 
-# Import Deepseek API client (assuming it exists)
-# from deepseek import DeepseekClient  # Uncomment and modify as necessary
+if not w3.is_connected():
+    logging.error("Failed to connect to Ethereum network.")
+    raise Exception("Ethereum connection error.")
+else:
+    logging.info("Connected to Ethereum network")
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Example usage
+model = Sequential()
 
+# Define an enhanced model for investment predictions
+model = Sequential([
+    Dense(64, activation='relu', input_shape=(3,)),
+    Dense(32, activation='relu'),
+    Dense(16, activation='relu'),
+    Dense(3, activation='softmax')  # Output layer for 3 asset classes
+])
+
+# Compile the model for investment predictions
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Function to train the model on historical investment data
+def train_model(historical_data, labels):
+    """
+    Train the model on historical investment data.
+    Args:
+        historical_data: Numpy array of historical investment data
+        labels: Numpy array of corresponding labels
+    """
+    model.fit(historical_data, labels, epochs=50, batch_size=32, validation_split=0.2)
+
+# Function to set up the Hybrid Fund
 def setup_fund(initial_allocations=None):
     """
     Set up a Hybrid Fund using the "Fund in a Box" service with AI-driven asset allocation.
@@ -47,44 +72,7 @@ def setup_fund(initial_allocations=None):
         for asset, allocation in initial_allocations.items():
             logging.info(f"AI-adjusted allocation: {allocation * 100}% to {asset}.")
         
-        # Placeholder for Deepseek.com integration
-        # deepseek_response = DeepseekClient.get_data(initial_allocations)  # Example call
-        # logging.info(f"Deepseek response: {deepseek_response}")
-
-        # Actual implementation to interact with the Fund in a Box service
-        # Example interaction (this should be replaced with actual API calls)
-        # response = some_api_call_to_fund_in_a_box_service(initial_allocations)  # Placeholder
-        # if response.status_code == 200:
-        #     logging.info("Hybrid Fund setup completed successfully with AI-driven allocations.")
-        # else:
-        #     logging.error("Failed to set up Hybrid Fund: " + response.text)
+        return initial_allocations  # Return the updated allocations
     except Exception as e:
         logging.error(f"An error occurred while setting up the Hybrid Fund: {e}")
-
-# Define initial investment variable
-initial_investment = 10000  # Example value
-
-def stay_in_your_home_program(income, home_value, loan_amount, assistance_needed):
-    """
-    Assess eligibility and calculate potential assistance for the Stay In Your Home Program.
-    """
-    try:
-        logging.info("Assessing eligibility for the Stay In Your Home Program...")
-        
-        # Calculate equity in the home
-        equity = home_value - loan_amount
-        logging.info(f"Calculated equity: ${equity}.")
-        
-        # Example eligibility criteria
-        if income < 50000 and home_value < 300000 and equity > 0:
-            assistance = min(loan_amount, assistance_needed, equity)
-            logging.info(f"Eligible for assistance: ${assistance}.")
-            print(f"Eligible for assistance: ${assistance}.")
-            return assistance
-        else:
-            logging.info("Not eligible for assistance.")
-            print("Not eligible for assistance.")
-            return 0
-    except Exception as e:
-        logging.error(f"An error occurred while assessing the program: {e}")
-        return 0
+        return None

@@ -22,7 +22,11 @@ minted_nfts = {
 }
 
 # Connect to Ethereum network (replace with your Infura URL or local node)
-w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_NEW_INFURA_PROJECT_ID'))
+w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_VALID_INFURA_PROJECT_ID'))  # Replace with your actual Infura project ID
+
+if not w3.is_connected():
+    logger.error("Failed to connect to Ethereum network.")
+    raise Exception("Ethereum connection error.")
 
 @app.route('/')
 def index():
