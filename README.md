@@ -1,25 +1,89 @@
-# Capetain-Cetriva ![GitHub Marketplace](https://img.shields.io/badge/GitHub-Marketplace-blue) ![License](https://img.shields.io/badge/License-MIT-green)
+# Capetain-Cetriva
 
-Welcome to the Capetain-Cetriva repository!
+## Project Overview
 
-## New Logo
+Capetain-Cetriva is a project designed to facilitate fund management and NFT minting using advanced algorithms and API integrations. The project leverages the Deepseek, Singularity, and Intellasense APIs to enhance asset allocation strategies.
 
-We have introduced a new logo for Capetain-Cetriva, which is now available as an NFT.
+## Installation Instructions
 
-## NFT Minting
+1. Clone the repository:
 
-You can mint an NFT with a preset value of $250,000. Use the "Mint NFT" button on the main page to initiate the minting process.
+   ```bash
+   git clone https://github.com/yourusername/Capetain-Cetriva.git
+   cd Capetain-Cetriva
+   ```
 
-## Fund Setup
+2. Set up a virtual environment:
 
-The application allows you to set up a Hybrid Fund. Click the "Set Up Hybrid Fund" button to get started.
+   ```bash
+   python3 -m venv new_venv
+   source new_venv/bin/activate  # On Windows use `new_venv\Scripts\activate`
+   ```
 
-## Usage
+3. Install the required dependencies:
 
-1. Start the application.
-2. Navigate to the main page.
-3. Use the buttons to set up the fund or mint the NFT.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## License
+4. Replace the Infura project ID in `app.py` and `fund_in_a_box.py` with your actual project ID.
 
-This project is licensed under the MIT License.
+## API Integration
+
+The project integrates the following APIs:
+
+- **Deepseek API**: Used for historical data analysis.
+- **Singularity API**: Provides predictive modeling based on insights from Deepseek.
+- **Intellasense API**: Refines predictions to align with current market trends.
+
+## Usage Instructions
+
+### Setup Fund
+
+To set up a fund, send a POST request to the `/setup_fund` endpoint with the following JSON body:
+
+```json
+{
+  "initial_allocations": {
+    "equities": 0.5,
+    "bonds": 0.3,
+    "real_estate": 0.2
+  }
+}
+```
+
+**Expected Response**:
+
+```json
+{
+  "message": "Hybrid Fund setup completed!",
+  "result": {
+    "equities": 0.45,
+    "bonds": 0.35,
+    "real_estate": 0.2
+  }
+}
+```
+
+### Mint NFT
+
+To mint an NFT, send a POST request to the `/mint_nft` endpoint. No body is required.
+
+**Expected Response**:
+
+```json
+{
+  "message": "NFT minted successfully! ID: <nft_id>, Value: $250000"
+}
+```
+
+## Error Handling
+
+Common errors include:
+
+- **Ethereum Connection Error**: Ensure your Infura project ID is valid and that you have an internet connection.
+- **API Call Failures**: Check the API documentation for the respective services for troubleshooting.
+
+## Contributing
+
+Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.

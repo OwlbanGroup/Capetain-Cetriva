@@ -4,6 +4,7 @@ from tensorflow.keras.layers import Dense  # type: ignore
 import numpy as np
 import logging  # Import logging
 from web3 import Web3  # Ensure this import is added
+import requests  # Import requests for API calls
 
 # Initialize Web3 connection (replace with your Infura or local node URL)
 w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_NEW_INFURA_PROJECT_ID'))  # Replace with your actual Infura project ID
