@@ -6,6 +6,9 @@ import logging  # Import logging
 from web3 import Web3  # Ensure this import is added
 import requests  # Import requests for API calls
 
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+
 # Initialize Web3 connection (replace with your Infura or local node URL)
 w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_NEW_INFURA_PROJECT_ID'))  # Replace with your actual Infura project ID
 
