@@ -8,6 +8,8 @@ from fund_in_a_box import setup_fund
 import uuid
 from web3 import Web3
 import requests  # Import requests for API calls
+from requests.exceptions import RequestException  # Import for handling requests exceptions
+import time  # Import for sleep function
 
 # Configure logging
 logging.basicConfig(
@@ -46,17 +48,44 @@ def setup_fund_route():
         data = request.json
         initial_allocations = data.get('initial_allocations', None)
 
-        # Call Deepseek API for historical data analysis
-        deepseek_response = requests.post('https://api.deepseek.com/analyze', json={"data": initial_allocations})
-        deepseek_data = deepseek_response.json()
+        # Call Deepseek API for historical data analysis with retry logic
+        for attempt in range(3):  # Retry up to 3 times
+            try:
+                deepseek_response = requests.post('https://api.deepseek.com/analyze', json={"data": initial_allocations})
+                deepseek_response.raise_for_status()  # Raise an error for bad responses
+                deepseek_data = deepseek_response.json()
+                break  # Exit the retry loop if successful
+            except RequestException as e:
+                logger.error(f"Error calling Deepseek API: {str(e)}")
+                time.sleep(2)  # Wait before retrying
+        else:
+            return "Failed to connect to Deepseek API after multiple attempts.", 500
 
-        # Call Singularity API for predictive modeling
-        singularity_response = requests.post('https://api.singularity.com/predict', json={"data": deepseek_data})
-        singularity_data = singularity_response.json()
+        # Call Singularity API for predictive modeling with retry logic
+        for attempt in range(3):
+            try:
+                singularity_response = requests.post('https://api.singularity.com/predict', json={"data": deepseek_data})
+                singularity_response.raise_for_status()
+                singularity_data = singularity_response.json()
+                break
+            except RequestException as e:
+                logger.error(f"Error calling Singularity API: {str(e)}")
+                time.sleep(2)
+        else:
+            return "Failed to connect to Singularity API after multiple attempts.", 500
 
-        # Call Intellasense API for market trend refinement
-        intellasense_response = requests.post('https://api.intellasense.com/refine', json={"data": singularity_data})
-        refined_allocations = intellasense_response.json()
+        # Call Intellasense API for market trend refinement with retry logic
+        for attempt in range(3):
+            try:
+                intellasense_response = requests.post('https://api.intellasense.com/refine', json={"data": singularity_data})
+                intellasense_response.raise_for_status()
+                refined_allocations = intellasense_response.json()
+                break
+            except RequestException as e:
+                logger.error(f"Error calling Intellasense API: {str(e)}")
+                time.sleep(2)
+        else:
+            return "Failed to connect to Intellasense API after multiple attempts.", 500
 
         # Set up the Hybrid Fund with refined allocations
         logger.info("Setting up fund with refined allocations...")
