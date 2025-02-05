@@ -99,184 +99,12 @@ if __name__ == "__main__":
         loss, accuracy = evaluate_model(test_data, test_labels)
         logging.info("Model evaluation completed.")
     
-    # Define an enhanced model for investment predictions with early stopping and dropout
-    model = Sequential([
-    Dense(128, activation='relu', input_shape=(3,), kernel_regularizer=L1L2(l1=0.01, l2=0.01), bias_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(64, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(32, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(16, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(3, activation='softmax')  # Output layer for 3 asset classes
-])
-
-model.compile(optimizer=Adam(lr=0.001), loss=CategoricalCrossentropy(), metrics=[Accuracy()])
-
-early_stopping = EarlyStopping(monitor='val_loss', patience=10, min_delta=0.001)
-model_checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, mode='min')
-
-def train_model(historical_data, labels):
-    logging.info("Training model...")
-    model.fit(historical_data, labels, epochs=100, batch_size=64, validation_split=0.2, callbacks=[early_stopping, model_checkpoint])
-    logging.info("Model training completed.")
-
-def make_prediction(new_data):
-    logging.info("Making predictions...")
-    predictions = model.predict(new_data)
-    logging.info("Predictions completed.")
-    return predictions
-
-def evaluate_model(test_data, test_labels):
-    logging.info("Evaluating model...")
-    loss, accuracy = model.evaluate(test_data, test_labels)
-    logging.info("Model evaluation completed.")
-    return loss, accuracy
-model = Sequential([
-    Dense(128, activation='relu', input_shape=(3,), kernel_regularizer=L1L2(l1=0.01, l2=0.01), bias_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(64, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(32, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(16, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(3, activation='softmax')  # Output layer for 3 asset classes
-])
-
-model.compile(optimizer=Adam(lr=0.001), loss=CategoricalCrossentropy(), metrics=[Accuracy()])
-
-early_stopping = EarlyStopping(monitor='val_loss', patience=10, min_delta=0.001)
-model_checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, mode='min')
-
-def train_model(historical_data, labels):
-    logging.info("Training model...")
-    model.fit(historical_data, labels, epochs=100, batch_size=64, validation_split=0.2, callbacks=[early_stopping, model_checkpoint])
-    logging.info("Model training completed.")
-
-def make_prediction(new_data):
-    logging.info("Making predictions...")
-    predictions = model.predict(new_data)
-    logging.info("Predictions completed.")
-    return predictions
-
-def evaluate_model(test_data, test_labels):
-    logging.info("Evaluating model...")
-    loss, accuracy = model.evaluate(test_data, test_labels)
-    logging.info("Model evaluation completed.")
-    return loss, accuracy
-    Dropout(0.2),
-    Dense(64, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(32, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(16, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(3, activation='softmax')  # Output layer for 3 asset classes
-])
-
-model.compile(optimizer=Adam(lr=0.001), loss=CategoricalCrossentropy(), metrics=[Accuracy()])
-
-early_stopping = EarlyStopping(monitor='val_loss', patience=10, min_delta=0.001)
-model_checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, mode='min')
-
-def train_model(historical_data, labels):
-    logging.info("Training model...")
-    model.fit(historical_data, labels, epochs=100, batch_size=64, validation_split=0.2, callbacks=[early_stopping, model_checkpoint])
-    logging.info("Model training completed.")
-
-def make_prediction(new_data):
-    logging.info("Making predictions...")
-    predictions = model.predict(new_data)
-    logging.info("Predictions completed.")
-    return predictions
-
-def evaluate_model(test_data, test_labels):
-    logging.info("Evaluating model...")
-    loss, accuracy = model.evaluate(test_data, test_labels)
-    logging.info("Model evaluation completed.")
-    return loss, accuracyential([
-    Dense(128, activation='relu', input_shape=(3,), kernel_regularizer=L1L2(l1=0.01, l2=0.01), bias_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(64, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(32, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(16, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(3, activation='softmax')  # Output layer for 3 asset classes
-])
-
-model.compile(optimizer=Adam(lr=0.001), loss=CategoricalCrossentropy(), metrics=[Accuracy()])
-
-early_stopping = EarlyStopping(monitor='val_loss', patience=10, min_delta=0.001)
-model_checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, mode='min')
-
-def train_model(historical_data, labels):
-    logging.info("Training model...")
-    model.fit(historical_data, labels, epochs=100, batch_size=64, validation_split=0.2, callbacks=[early_stopping, model_checkpoint])
-    logging.info("Model training completed.")
-
-def make_prediction(new_data):
-    logging.info("Making predictions...")
-    predictions = model.predict(new_data)
-    logging.info("Predictions completed.")
-    return predictions
-
-def evaluate_model(test_data, test_labels):
-    logging.info("Evaluating model...")
-    loss, accuracy = model.evaluate(test_data, test_labels)
-    logging.info("Model evaluation completed.")
-    return loss, accuracyential([
-    Dense(128, activation='relu', input_shape=(3,), kernel_regularizer=L1L2(l1=0.01, l2=0.01), bias_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(64, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(32, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(16, activation='relu', kernel_regularizer=L1(0.01)),
-    Dropout(0.2),
-    Dense(3, activation='softmax')  # Output layer for 3 asset classes
-])
-
-model.compile(optimizer=Adam(lr=0.001), loss=CategoricalCrossentropy(), metrics=[Accuracy()])
-
-early_stopping = EarlyStopping(monitor='val_loss', patience=10, min_delta=0.001)
-model_checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, mode='min')
-
-def train_model(historical_data, labels):
-    logging.info("Training model...")
-    model.fit(historical_data, labels, epochs=100, batch_size=64, validation_split=0.2, callbacks=[early_stopping, model_checkpoint])
-    logging.info("Model training completed.")
-
-def make_prediction(new_data):
-    logging.info("Making predictions...")
-    predictions = model.predict(new_data)
-    logging.info("Predictions completed.")
-    return predictions
-
-def evaluate_model(test_data, test_labels):
-    logging.info("Evaluating model...")
-    loss, accuracy = model.evaluate(test_data, test_labels)
-    logging.info("Model evaluation completed.")
-    return loss, accuracy
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
-from tensorflow.keras.regularizers import L1, L1L2
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.losses import CategoricalCrossentropy
-from tensorflow.keras.metrics import Accuracy
-import numpy as np
-import logging
-from web3 import Web3
-import requests
-
 # Define an enhanced model for investment predictions with early stopping and dropout
 model = Sequential([
     Dense(128, activation='relu', input_shape=(3,), kernel_regularizer=L1L2(l1=0.01, l2=0.01), bias_regularizer=L1(0.01)),
     Dropout(0.2),
+    Dense(64, activation='relu', kernel_regularizer=L1(0.01)),
+    Dropout(0.2),
     Dense(32, activation='relu', kernel_regularizer=L1(0.01)),
     Dropout(0.2),
     Dense(16, activation='relu', kernel_regularizer=L1(0.01)),
@@ -284,13 +112,9 @@ model = Sequential([
     Dense(3, activation='softmax')  # Output layer for 3 asset classes
 ])
 
-# Compile the model for investment predictions with early stopping
-model.compile(optimizer=Adam(), loss=CategoricalCrossentropy(), metrics=[Accuracy()])
+model.compile(optimizer=Adam(lr=0.001), loss=CategoricalCrossentropy(), metrics=[Accuracy()])
 
-# Define early stopping callback
-early_stopping = EarlyStopping(monitor='val_loss', patience=5, min_delta=0.001)
-
-# Define model checkpoint callback
+early_stopping = EarlyStopping(monitor='val_loss', patience=10, min_delta=0.001)
 model_checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, mode='min')
 
 # Function to train the model on historical investment data with early stopping
