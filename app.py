@@ -2,6 +2,7 @@
 # Main application for Capetain-Cetriva, handling fund setup and NFT minting.
 
 import logging
+import json  # Import json for data saving
 from flask import Flask, render_template, request
 import numpy as np
 from fund_in_a_box import setup_fund
@@ -20,10 +21,15 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# In-memory storage for minted NFTs
-minted_nfts = {
-    "Owlban Group NFT": 250000,
-}
+# File path for storing minted NFTs
+NFTS_FILE_PATH = 'minted_nfts.json'
+
+# Load minted NFTs from file if it exists
+try:
+    with open(NFTS_FILE_PATH, 'r') as file:
+        minted_nfts = json.load(file)
+except FileNotFoundError:
+    minted_nfts = {}  # Initialize as empty if file does not exist
 
 # Connect to Ethereum network (replace with your actual Infura project ID)
 w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/3798a0f85fc046cdabef6514acf94a81'))  # Replace with your actual Infura project ID
@@ -108,7 +114,10 @@ def mint_nft():
         nft_id = str(uuid.uuid4())
         nft_value = 250000
 
-        # Placeholder logic for minting an NFT
+        # Save the minted NFT to the file
+        minted_nfts[nft_id] = nft_value
+        with open(NFTS_FILE_PATH, 'w') as file:
+            json.dump(minted_nfts, file)  # Save updated NFTs to file
         logger.info(f"Minting NFT with ID: {nft_id} and value: ${nft_value}")
 
         # Here you would include the logic to mint the NFT on the blockchain

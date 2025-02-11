@@ -44,6 +44,18 @@ def train_model(historical_data, labels):
     """
     model.fit(historical_data, labels, epochs=50, batch_size=32, validation_split=0.2)
 
+import json  # Import json for data saving
+
+# File path for storing fund allocations
+ALLOCATIONS_FILE_PATH = 'fund_allocations.json'
+
+# Load previous allocations from file if it exists
+try:
+    with open(ALLOCATIONS_FILE_PATH, 'r') as file:
+        previous_allocations = json.load(file)
+except FileNotFoundError:
+    previous_allocations = {}  # Initialize as empty if file does not exist
+
 # Function to set up the Hybrid Fund
 def setup_fund(initial_allocations=None):
     """
@@ -81,6 +93,10 @@ def setup_fund(initial_allocations=None):
         for asset, allocation in initial_allocations.items():
             logging.info(f"Refined allocation: {allocation * 100}% to {asset}.")
         
+        # Save the refined allocations to the file
+        with open(ALLOCATIONS_FILE_PATH, 'w') as file:
+            json.dump(initial_allocations, file)  # Save updated allocations to file
+
         return initial_allocations  # Return the updated allocations
     except requests.exceptions.RequestException as e:
         logging.error(f"An error occurred while making API requests: {e}")
