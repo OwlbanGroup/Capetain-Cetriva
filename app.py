@@ -3,12 +3,15 @@
 
 import logging
 import json  # Import json for data saving
-from flask import Flask, render_template, request
+import requests  # Import requests for fetching stock data
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+
 import numpy as np
 from fund_in_a_box import setup_fund
 import uuid
 from web3 import Web3
-import requests  # Import requests for API calls
 from requests.exceptions import RequestException  # Import for handling requests exceptions
 import time  # Import for sleep function
 
@@ -20,6 +23,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Change this to a random secret key
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # Database for user authentication
+db = SQLAlchemy(app)
+
+# User model for authentication
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
 
 # File path for storing minted NFTs
 NFTS_FILE_PATH = 'minted_nfts.json'
@@ -27,7 +39,7 @@ NFTS_FILE_PATH = 'minted_nfts.json'
 # Load minted NFTs from file if it exists
 try:
     with open(NFTS_FILE_PATH, 'r') as file:
-        minted_nfts = json.load(file)
+        minted_nfts = json.load(file)  # Load minted NFTs from file
 except FileNotFoundError:
     minted_nfts = {}  # Initialize as empty if file does not exist
 
@@ -38,9 +50,52 @@ if not w3.is_connected():
     logger.error("Failed to connect to Ethereum network.")
     raise Exception("Ethereum connection error.")
 
-@app.route('/')
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """Handle user registration."""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = generate_password_hash(request.form['password'], method='sha256')
+        new_user = User(username=username, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Handle user login."""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
+            session['user_id'] = user.id
+            return redirect(url_for('index'))
+        return "Invalid username or password", 401
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    """Handle user logout."""
+    session.pop('user_id', None)
+    return redirect(url_for('login'))
+
+@app.route('/high_yield_dividends', methods=['GET'])
+def high_yield_dividends():
+    """Fetch and display high-yield dividend stocks."""
+    try:
+        response = requests.get('https://financialmodelingprep.com/api/v3/stock/screener?apikey=YOUR_API_KEY')  # Replace with actual API URL
+        response.raise_for_status()
+        dividend_stocks = response.json()
+        return render_template('dividends.html', stocks=dividend_stocks, user=session.get('user_id'))
+    except Exception as e:
+        logger.error(f"Error fetching dividend stocks: {str(e)}")
+        return "An error occurred while fetching dividend stocks.", 500
+
+@app.route('/index')
 def index():
-    """Render the main index page."""
+    """Render the index page."""
     try:
         return render_template('index.html')
     except Exception as e:
