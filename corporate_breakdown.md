@@ -2,6 +2,11 @@
 
 ## Executive Summary
 
+- Account for David Leeper (CFO, Owlban Group):
+  - Account Number: 546910413
+  - Status: Newly created valid format account number
+  - Notes: Placeholder account number generated for documentation purposes
+
 - Hybrid AI-driven investment fund combining quantitative strategies with fundamental analysis
 - Focus on alternative assets with AI-enhanced valuation models
 - Target AUM: $500M within 3 years
@@ -14,6 +19,7 @@
 - **Banking Arm**: Capetain Private AI Bank
   - Charter Status: Accelerated approval in progress
   - Regulatory Pathway: OCC Special Purpose National Bank Charter
+  - Routing Number: 021000021
   - Timeline:
     - Phase 1: Pre-filing (Completed Q1 2024)
     - Phase 2: Formal Application (Q3 2024)
@@ -366,7 +372,6 @@
 | 2024 | $150M      | -             | Seed Capital Phase |
 | 2025 | $350M      | 133%          | Institutional Onboarding |
 | 2026 | $500M      | 43%           | Mature Portfolio |
-|       |            |               |                 |
 
 ### Fee Structure Impact
 
