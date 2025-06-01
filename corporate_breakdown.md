@@ -12,6 +12,11 @@
 - Target AUM: $500M within 3 years
 - Competitive edge: Proprietary AI algorithms for market prediction and risk management
 
+## Ownership
+
+- Owner of Owlban Group: Oscar Broome
+- Owner of Capetain Cetriva: Oscar Broome
+
 ## Fund Overview
 
 - Legal Structure: Delaware LP with Integrated Financial Ecosystem
@@ -223,7 +228,7 @@
 | **Banking Operations** | 30M | 20% | Loans, deposits, credit facilities |
 | **Wealth Management** | 30M | 20% | High-net-worth portfolios, trusts |
 | **Legal Protection (ESA)** | 15M | 10% | Litigation funding, asset protection |
-| **Total AUM** | **$150M** | **100%** |
+| **Total AUM** | **$150M** | **100%** | Aggregate of all divisions |
 
 ### Projected AUM Growth
 
