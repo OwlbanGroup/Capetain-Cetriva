@@ -19,7 +19,8 @@ class TestPerformanceAndEdgeCases(unittest.TestCase):
             self.assertIsNotNone(account_number)
         duration = time.time() - start_time
         print(
-            f"Account generation for 10,000 iterations took {duration:.2f} seconds"
+            f"Account generation for 10,000 iterations took "
+            f"{duration:.2f} seconds"
         )
 
     def test_performance_routing_retrieval(self):
@@ -29,7 +30,8 @@ class TestPerformanceAndEdgeCases(unittest.TestCase):
             self.assertIsNotNone(routing_number)
         duration = time.time() - start_time
         print(
-            f"Routing retrieval for 10,000 iterations took {duration:.2f} seconds"
+            f"Routing retrieval for 10,000 iterations took "
+            f"{duration:.2f} seconds"
         )
 
     def test_edge_case_empty_account_length(self):
