@@ -1,26 +1,28 @@
 import unittest
-
-
 from validate_routing_number import validate_routing_number
 
 
 class TestValidateRoutingNumber(unittest.TestCase):
-
     def test_valid_routing_number(self):
-        self.assertTrue(validate_routing_number("021000021"))  # Valid routing number
+        valid_number = "021000021"  # Example valid routing number
+        self.assertTrue(validate_routing_number(valid_number))
 
-    def test_invalid_routing_number_length(self):
-        self.assertFalse(validate_routing_number("12345678"))  # Too short
-        self.assertFalse(validate_routing_number("1234567890"))  # Too long
+    def test_invalid_routing_number(self):
+        invalid_number = "123456789"
+        self.assertFalse(validate_routing_number(invalid_number))
 
-    def test_invalid_routing_number_characters(self):
-        self.assertFalse(validate_routing_number("12345678a"))  # Contains non-digit
+    def test_wrong_length(self):
+        short_number = "12345678"
+        long_number = "1234567890"
+        self.assertFalse(validate_routing_number(short_number))
+        self.assertFalse(validate_routing_number(long_number))
 
-    def test_invalid_routing_number_checksum(self):
-        self.assertFalse(validate_routing_number("123456789"))  # Invalid checksum
+    def test_non_digit_input(self):
+        non_digit = "abcdefghi"
+        self.assertFalse(validate_routing_number(non_digit))
 
     def test_non_string_input(self):
-        self.assertFalse(validate_routing_number(123456789))  # Non-string input
+        self.assertFalse(validate_routing_number(123456789))
 
 
 if __name__ == "__main__":

@@ -39,6 +39,10 @@ def generate_account_number(length=9):
     Raises:
         ValueError: If length is less than 2.
     """
+    if not isinstance(length, int):
+        logger.error("Account number length must be an integer")
+        raise ValueError("Account number length must be an integer")
+
     if length < 2:
         logger.error("Account number length must be at least 2")
         raise ValueError("Account number length must be at least 2")
@@ -54,5 +58,8 @@ def generate_account_number(length=9):
 
 
 if __name__ == "__main__":
-    account_number = generate_account_number()
-    print(f"Generated valid account number: {account_number}")
+    try:
+        account_number = generate_account_number()
+        print(f"Generated valid account number: {account_number}")
+    except Exception as e:
+        logger.error(f"Error generating account number: {e}")

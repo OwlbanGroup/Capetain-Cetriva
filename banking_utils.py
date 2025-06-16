@@ -1,5 +1,5 @@
 import logging
-from generate_account_number import generate_account_number
+from generate_account_number import generate_account_number, is_valid_account_number
 from get_routing_number import get_routing_number
 from validate_routing_number import validate_routing_number
 
@@ -9,17 +9,20 @@ logger = logging.getLogger(__name__)
 
 
 class BankingUtils:
-
     @staticmethod
     def generate_account(length=9):
         try:
             account_number = generate_account_number(length)
+            if not is_valid_account_number(account_number):
+                logger.error(
+                    f"Generated account number failed validation: {account_number}"
+                )
+                return None
             logger.info(f"Generated account number: {account_number}")
             return account_number
         except Exception as e:
             logger.error(f"Error generating account number: {e}")
             return None
-
 
     @staticmethod
     def get_routing(bank_name):
@@ -31,12 +34,13 @@ class BankingUtils:
             logger.error(f"Error retrieving routing number for {bank_name}: {e}")
             return None
 
-
     @staticmethod
     def validate_routing(routing_number):
         try:
             is_valid = validate_routing_number(routing_number)
-            logger.info(f"Routing number {routing_number} validation result: {is_valid}")
+            logger.info(
+                f"Routing number {routing_number} validation result: {is_valid}"
+            )
             return is_valid
         except Exception as e:
             logger.error(f"Error validating routing number {routing_number}: {e}")
