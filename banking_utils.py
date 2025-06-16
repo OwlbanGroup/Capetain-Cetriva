@@ -10,9 +10,28 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+import os
+import logging
+from unittest.mock import MagicMock
+
+from generate_account_number import generate_account_number, is_valid_account_number
+from get_routing_number import get_routing_number
+from validate_routing_number import validate_routing_number
+from ach_payments import ACHPayments
+from plaid_integration import PlaidIntegration
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 class BankingUtils:
-    ach_payments = ACHPayments()
-    plaid_integration = PlaidIntegration()
+    
+    # Patch PlaidIntegration to avoid real API calls during tests
+    if os.getenv('TESTING') == '1':
+        plaid_integration = MagicMock()
+    else:
+        plaid_integration = PlaidIntegration()
 
     @staticmethod
     def generate_account(length=9):
@@ -38,7 +57,7 @@ class BankingUtils:
         except Exception as e:
             logger.error(f"Error retrieving routing number for {bank_name}: {e}")
             return None
-
+        
     @staticmethod
     def validate_routing(routing_number):
         try:

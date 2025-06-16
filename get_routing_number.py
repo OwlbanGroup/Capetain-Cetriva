@@ -72,7 +72,7 @@ def get_routing_number(bank_name):
                 error_msg = "Routing number not found in API response."
                 logger.error(error_msg)
                 return error_msg
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, ValueError):
             error_msg = "Failed to parse API response as JSON."
             logger.error(error_msg)
             return error_msg
