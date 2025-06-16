@@ -57,7 +57,8 @@ class ACHPayments:
             try:
                 logger.info(
                     f"Attempt {attempt}: Creating ACH payment of {amount} to account "
-                    f"{account_number} with routing {routing_number}"
+                    f"{account_number} with routing "
+                    f"{routing_number}"
                 )
                 response = requests.post(self.api_url, json=payload, headers=headers, timeout=10)
                 response.raise_for_status()
@@ -94,7 +95,9 @@ class ACHPayments:
             )
             response.raise_for_status()
             status_response = response.json()
-            logger.info(f"Payment status retrieved: {status_response}")
+            logger.info(
+                f"Payment status retrieved: {status_response}"
+            )
             return status_response
         except requests.RequestException as e:
             logger.error(f"Error retrieving payment status: {e}")

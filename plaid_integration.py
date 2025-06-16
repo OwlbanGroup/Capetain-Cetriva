@@ -9,6 +9,9 @@ from plaid.model.link_token_create_request import LinkTokenCreateRequest
 from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
 from plaid.model.transactions_get_request import TransactionsGetRequest
 from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
+from plaid.model.item_get_request import ItemGetRequest
+from plaid.model.item_remove_request import ItemRemoveRequest
+from plaid.model.item_access_token_invalidate_request import ItemAccessTokenInvalidateRequest
 from plaid.configuration import Configuration
 from plaid.exceptions import ApiException
 
@@ -78,4 +81,86 @@ class PlaidIntegration:
             return response.to_dict()
         except ApiException as e:
             logger.error(f"Plaid error retrieving accounts: {e}")
+            return None
+
+    def get_transactions(
+        self,
+        access_token: str,
+        start_date: str,
+        end_date: str,
+        options: Optional[TransactionsGetRequestOptions] = None,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve transactions for the given access token and date range.
+        Args:
+            access_token (str): The access token.
+            start_date (str): Start date in 'YYYY-MM-DD' format.
+            end_date (str): End date in 'YYYY-MM-DD' format.
+            options (TransactionsGetRequestOptions, optional): Additional options.
+        Returns:
+            dict or None: Transactions information.
+        """
+        try:
+            request = TransactionsGetRequest(
+                access_token=access_token,
+                start_date=start_date,
+                end_date=end_date,
+                options=options,
+            )
+            response = self.client.transactions_get(request)
+            logger.info("Retrieved transactions information")
+            return response.to_dict()
+        except ApiException as e:
+            logger.error(f"Plaid error retrieving transactions: {e}")
+            return None
+
+    def get_item(self, access_token: str) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve item information for the given access token.
+        Args:
+            access_token (str): The access token.
+        Returns:
+            dict or None: Item information.
+        """
+        try:
+            request = ItemGetRequest(access_token=access_token)
+            response = self.client.item_get(request)
+            logger.info("Retrieved item information")
+            return response.to_dict()
+        except ApiException as e:
+            logger.error(f"Plaid error retrieving item: {e}")
+            return None
+
+    def remove_item(self, access_token: str) -> Optional[Dict[str, Any]]:
+        """
+        Remove (unlink) an item for the given access token.
+        Args:
+            access_token (str): The access token.
+        Returns:
+            dict or None: Remove item response.
+        """
+        try:
+            request = ItemRemoveRequest(access_token=access_token)
+            response = self.client.item_remove(request)
+            logger.info("Removed item successfully")
+            return response.to_dict()
+        except ApiException as e:
+            logger.error(f"Plaid error removing item: {e}")
+            return None
+
+    def invalidate_access_token(self, access_token: str) -> Optional[Dict[str, Any]]:
+        """
+        Invalidate (refresh) the access token.
+        Args:
+            access_token (str): The access token.
+        Returns:
+            dict or None: Invalidate access token response.
+        """
+        try:
+            request = ItemAccessTokenInvalidateRequest(access_token=access_token)
+            response = self.client.item_access_token_invalidate(request)
+            logger.info("Invalidated access token successfully")
+            return response.to_dict()
+        except ApiException as e:
+            logger.error(f"Plaid error invalidating access token: {e}")
             return None

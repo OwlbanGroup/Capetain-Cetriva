@@ -27,7 +27,7 @@ class TestACHPayments(unittest.TestCase):
         response = self.ach.create_payment("123456789", "987654321", 100.0, "Test payment")
         self.assertIsNotNone(response)
         self.assertEqual(response.get("status"), "failure")
-
+    
     def test_create_payment_invalid_amount(self):
         response = self.ach.create_payment("123456789", "987654321", -10.0, "Test payment")
         self.assertIsNone(response)
@@ -56,7 +56,7 @@ class TestACHPayments(unittest.TestCase):
         response = self.ach.get_payment_status("12345")
         self.assertIsNotNone(response)
         self.assertEqual(response.get("status"), "failure")
-
+    
     def test_get_payment_status_missing_transaction_id(self):
         response = self.ach.get_payment_status("")
         self.assertIsNone(response)
