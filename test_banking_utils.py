@@ -45,30 +45,30 @@ class TestBankingUtils(unittest.TestCase):
         result = BankingUtils.validate_routing('987654321')
         self.assertFalse(result)
 
-    @patch.object(BankingUtils.ach_payments, 'create_payment')
+    @patch('ach_payments.ACHPayments.create_payment')
     def test_create_ach_payment_success(self, mock_create_payment):
         mock_create_payment.return_value = {'status': 'success'}
         response = BankingUtils.create_ach_payment('123', '456', 100.0)
         self.assertEqual(response['status'], 'success')
 
-    @patch.object(BankingUtils.ach_payments, 'create_payment')
+    @patch('ach_payments.ACHPayments.create_payment')
     def test_create_ach_payment_failure(self, mock_create_payment):
         mock_create_payment.side_effect = Exception('Payment error')
         response = BankingUtils.create_ach_payment('123', '456', 100.0)
         self.assertIsNone(response)
 
-    @patch.object(BankingUtils.ach_payments, 'get_payment_status')
+    @patch('ach_payments.ACHPayments.get_payment_status')
     def test_get_ach_payment_status_success(self, mock_get_status):
         mock_get_status.return_value = {'status': 'completed'}
         status = BankingUtils.get_ach_payment_status('TX123')
         self.assertEqual(status['status'], 'completed')
 
-    @patch.object(BankingUtils.ach_payments, 'get_payment_status')
+    @patch('ach_payments.ACHPayments.get_payment_status')
     def test_get_ach_payment_status_failure(self, mock_get_status):
         mock_get_status.side_effect = Exception('Status error')
         status = BankingUtils.get_ach_payment_status('TX123')
         self.assertIsNone(status)
-
+        
     @patch.object(BankingUtils.plaid_integration, 'create_link_token')
     def test_create_plaid_link_token_success(self, mock_create_link_token):
         mock_create_link_token.return_value = {'link_token': 'token123'}
