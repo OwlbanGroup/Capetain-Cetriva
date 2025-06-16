@@ -1,5 +1,6 @@
 import logging
-
+import requests
+import time
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -8,7 +9,10 @@ logger = logging.getLogger(__name__)
 class ACHPayments:
     def __init__(self):
         # Initialize ACH payment gateway credentials/configuration here
-        pass
+        self.api_url = "https://api.example-ach-gateway.com/payments"
+        self.api_key = "your_api_key_here"
+        self.max_retries = 3
+        self.retry_delay = 2  # seconds
 
     def create_payment(
         self,
@@ -27,19 +31,34 @@ class ACHPayments:
         Returns:
             dict: Payment response or status.
         """
-        # Placeholder implementation - replace with actual ACH payment gateway integration
-        logger.info(
-            f"Creating ACH payment: {amount} to account {account_number} with routing {routing_number}"
-        )
-        payment_response = {
-            "status": "success",
+        payload = {
             "account_number": account_number,
             "routing_number": routing_number,
             "amount": amount,
             "description": description,
-            "transaction_id": "ACH1234567890",
         }
-        return payment_response
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+
+        for attempt in range(1, self.max_retries + 1):
+            try:
+                logger.info(
+                    f"Attempt {attempt}: Creating ACH payment of {amount} to account "
+                    f"{account_number} with routing {routing_number}"
+                )
+                response = requests.post(self.api_url, json=payload, headers=headers, timeout=10)
+                response.raise_for_status()
+                payment_response = response.json()
+                logger.info(f"ACH payment created successfully: {payment_response}")
+                return payment_response
+            except requests.RequestException as e:
+                logger.error(f"Error creating ACH payment on attempt {attempt}: {e}")
+                if attempt < self.max_retries:
+                    time.sleep(self.retry_delay)
+                else:
+                    return {"status": "failure", "error": str(e)}
 
     def get_payment_status(self, transaction_id):
         """
@@ -49,10 +68,19 @@ class ACHPayments:
         Returns:
             dict: Payment status information.
         """
-        # Placeholder implementation - replace with actual status retrieval logic
-        logger.info(f"Retrieving status for transaction {transaction_id}")
-        status_response = {
-            "transaction_id": transaction_id,
-            "status": "completed",
+        status_url = f"{self.api_url}/{transaction_id}/status"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
         }
-        return status_response
+        try:
+            logger.info(f"Retrieving status for transaction {transaction_id}")
+            response = requests.get(
+                status_url, headers=headers, timeout=10
+            )
+            response.raise_for_status()
+            status_response = response.json()
+            logger.info(f"Payment status retrieved: {status_response}")
+            return status_response
+        except requests.RequestException as e:
+            logger.error(f"Error retrieving payment status: {e}")
+            return {"status": "failure", "error": str(e)}
