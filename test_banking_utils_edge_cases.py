@@ -2,8 +2,9 @@ import unittest
 from unittest.mock import patch
 from banking_utils import BankingUtils
 
-class TestBankingUtilsEdgeCases(unittest.TestCase):
 
+class TestBankingUtilsEdgeCases(unittest.TestCase):
+    
     def test_generate_account_invalid_length_zero(self):
         account = BankingUtils.generate_account(0)
         self.assertIsNone(account)
@@ -14,10 +15,13 @@ class TestBankingUtilsEdgeCases(unittest.TestCase):
 
     @patch('banking_utils.get_routing_number')
     def test_get_routing_exception(self, mock_get_routing):
-        mock_get_routing.side_effect = Exception("API failure")
+        exc = Exception(
+            "API failure"
+        )
+        mock_get_routing.side_effect = exc
         routing = BankingUtils.get_routing("Test Bank")
         self.assertIsNone(routing)
-
+        
     @patch('banking_utils.validate_routing_number')
     def test_validate_routing_exception(self, mock_validate):
         mock_validate.side_effect = Exception("Validation error")
@@ -53,6 +57,7 @@ class TestBankingUtilsEdgeCases(unittest.TestCase):
         mock_get_accounts.side_effect = Exception("Get accounts error")
         response = BankingUtils.get_plaid_accounts("access_token")
         self.assertIsNone(response)
+
 
 if __name__ == "__main__":
     unittest.main()
