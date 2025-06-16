@@ -37,7 +37,7 @@ class TestBankingUtilsExtended(unittest.TestCase):
         mock_create_payment.side_effect = Exception("Create payment error")
         response = BankingUtils.create_ach_payment("123", "456", 100.0)
         self.assertIsNone(response)
-
+    
     @patch.object(BankingUtils.ach_payments, 'get_payment_status')
     def test_get_ach_payment_status_exception(self, mock_get_status):
         mock_get_status.side_effect = Exception("Get status error")
