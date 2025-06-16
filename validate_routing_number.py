@@ -1,10 +1,22 @@
+import logging
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 def validate_routing_number(routing_number):
     """
     Validates a US bank routing number using the checksum algorithm.
     Routing number must be a 9-digit string.
     Returns True if valid, False otherwise.
     """
+    if not isinstance(routing_number, str):
+        logger.error("Routing number must be a string")
+        return False
+
     if len(routing_number) != 9 or not routing_number.isdigit():
+        logger.error("Routing number must be a 9-digit string")
         return False
 
     digits = list(map(int, routing_number))
@@ -13,7 +25,12 @@ def validate_routing_number(routing_number):
         7 * (digits[1] + digits[4] + digits[7]) +
         1 * (digits[2] + digits[5] + digits[8])
     )
-    return checksum % 10 == 0
+    is_valid = checksum % 10 == 0
+    logger.info(
+        f"Routing number {routing_number} validation result: {is_valid}"
+    )
+    return is_valid
+
 
 if __name__ == "__main__":
     routing_number = "987654321"
