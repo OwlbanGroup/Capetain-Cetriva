@@ -3,6 +3,7 @@ import logging
 import json
 import os
 import time
+import xml.etree.ElementTree as ET
 
 
 logging.basicConfig(level=logging.INFO)
@@ -36,6 +37,18 @@ def save_cache(cache):
         logger.error(f"Failed to save cache: {e}")
 
 
+def parse_routing_number_from_xml(xml_text):
+    try:
+        root = ET.fromstring(xml_text)
+        # Example: find routingNumber element in XML
+        routing_number_elem = root.find(".//routingNumber")
+        if routing_number_elem is not None:
+            return routing_number_elem.text
+    except ET.ParseError as e:
+        logger.error(f"XML parsing error: {e}")
+    return None
+
+
 def get_routing_number(bank_name):
     """
     Get the official routing number for a given bank name.
@@ -53,33 +66,75 @@ def get_routing_number(bank_name):
 
     # Example API endpoint (not real, for demonstration only)
     api_url = f"https://www.frbservices.org/EPaymentsDirectory/search?searchString={bank_name.replace(' ', '%20')}&searchType=NAME"
-    try:
-        response = requests.get(api_url, timeout=10)
-        if response.status_code != 200:
-            error_msg = f"Failed to retrieve data from the Federal Reserve API. Status code: {response.status_code}"
-            logger.error(error_msg)
-            return error_msg
-        # The actual parsing logic depends on the API response format (likely XML or JSON)
-        # For demonstration, assume JSON response with routingNumber field
+    max_retries = 3
+    for attempt in range(max_retries):
         try:
-            data = response.json()
-            routing_number = data.get("routingNumber", None)
-            if routing_number:
-                cache[bank_name_lower] = {"routing_number": routing_number, "timestamp": time.time()}
-                save_cache(cache)
-                return routing_number
-            else:
-                error_msg = "Routing number not found in API response."
+            response = requests.get(api_url, timeout=10)
+            if response.status_code != 200:
+                error_msg = f"Failed to retrieve data from the Federal Reserve API. Status code: {response.status_code}"
                 logger.error(error_msg)
-                return error_msg
-        except (json.JSONDecodeError, ValueError):
-            error_msg = "Failed to parse API response as JSON."
+                if attempt == max_retries - 1:
+                    return error_msg
+                else:
+                    time.sleep(2 ** attempt)
+                    continue
+            content_type = response.headers.get('Content-Type', '')
+            if 'application/json' in content_type:
+                try:
+                    data = response.json()
+                    routing_number = data.get("routingNumber", None)
+                    if routing_number:
+                        cache[bank_name_lower] = {"routing_number": routing_number, "timestamp": time.time()}
+                        save_cache(cache)
+                        return routing_number
+                    else:
+                        error_msg = "Routing number not found in API response."
+                        logger.error(error_msg)
+                        if attempt == max_retries - 1:
+                            return error_msg
+                        else:
+                            time.sleep(2 ** attempt)
+                            continue
+                except (json.JSONDecodeError, ValueError):
+                    error_msg = "Failed to parse API response as JSON."
+                    logger.error(error_msg)
+                    if attempt == max_retries - 1:
+                        return error_msg
+                    else:
+                        time.sleep(2 ** attempt)
+                        continue
+            elif 'application/xml' in content_type or 'text/xml' in content_type:
+                routing_number = parse_routing_number_from_xml(response.text)
+                if routing_number:
+                    cache[bank_name_lower] = {"routing_number": routing_number, "timestamp": time.time()}
+                    save_cache(cache)
+                    return routing_number
+                else:
+                    error_msg = "Routing number not found in XML API response."
+                    logger.error(error_msg)
+                    if attempt == max_retries - 1:
+                        return error_msg
+                    else:
+                        time.sleep(2 ** attempt)
+                        continue
+            else:
+                error_msg = f"Unsupported content type: {content_type}"
+                logger.error(error_msg)
+                if attempt == max_retries - 1:
+                    return error_msg
+                else:
+                    time.sleep(2 ** attempt)
+                    continue
+        except requests.RequestException as e:
+            error_msg = f"An error occurred during API request: {str(e)}"
             logger.error(error_msg)
-            return error_msg
-    except requests.RequestException as e:
-        error_msg = f"An error occurred during API request: {str(e)}"
-        logger.error(error_msg)
-        return error_msg
+            if attempt == max_retries - 1:
+                return error_msg
+            else:
+                time.sleep(2 ** attempt)
+                continue
+
+    return "Failed to retrieve routing number after retries."
 
 
 if __name__ == "__main__":

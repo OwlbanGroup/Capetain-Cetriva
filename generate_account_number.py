@@ -28,16 +28,27 @@ def is_valid_account_number(account_number):
     return luhn_checksum(account_number) == 0
 
 
-def generate_account_number(length=9):
+def generate_account_number(length=9, numeric_only=True):
     """
-    Generates a valid bank account number with the specified length.
+    Generates a valid bank account number with the specified length and format.
     Uses Luhn algorithm for checksum validation.
+
     Args:
         length (int): Length of the account number (minimum 2).
+        numeric_only (bool): If True, generate numeric account number only.
+                             If False, generate alphanumeric account number.
+
     Returns:
         str: Valid account number as a string.
+
     Raises:
         ValueError: If length is less than 2.
+
+    Usage example:
+        >>> generate_account_number(10)
+        '1234567890'
+        >>> generate_account_number(12, numeric_only=False)
+        'A1B2C3D4E5F6'
     """
     if not isinstance(length, int):
         logger.error("Account number length must be an integer")
@@ -47,13 +58,23 @@ def generate_account_number(length=9):
         logger.error("Account number length must be at least 2")
         raise ValueError("Account number length must be at least 2")
 
-    while True:
-        number = ''.join(str(random.randint(0, 9)) for _ in range(length - 1))
-        checksum = luhn_checksum(number + '0')
-        check_digit = (10 - checksum) % 10
-        account_number = number + str(check_digit)
-        if is_valid_account_number(account_number):
-            logger.info(f"Generated valid account number: {account_number}")
+    if numeric_only:
+        while True:
+            number = ''.join(str(random.randint(0, 9)) for _ in range(length - 1))
+            checksum = luhn_checksum(number + '0')
+            check_digit = (10 - checksum) % 10
+            account_number = number + str(check_digit)
+            if is_valid_account_number(account_number):
+                logger.info(f"Generated valid account number: {account_number}")
+                return account_number
+    else:
+        # Generate alphanumeric account number (simple random uppercase letters and digits)
+        chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+        while True:
+            number = ''.join(random.choice(chars) for _ in range(length - 1))
+            # For alphanumeric, skip Luhn checksum validation
+            account_number = number + random.choice(chars)
+            logger.info(f"Generated alphanumeric account number: {account_number}")
             return account_number
 
 

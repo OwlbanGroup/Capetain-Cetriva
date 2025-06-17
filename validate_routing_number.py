@@ -10,6 +10,18 @@ def validate_routing_number(routing_number):
     Validates a US bank routing number using the checksum algorithm.
     Routing number must be a 9-digit string.
     Returns True if valid, False otherwise.
+
+    Args:
+        routing_number (str): The routing number to validate.
+
+    Returns:
+        bool: True if valid, False otherwise.
+
+    Usage example:
+        >>> validate_routing_number("123456789")
+        True
+        >>> validate_routing_number("987654321")
+        False
     """
     if not isinstance(routing_number, str):
         logger.error("Routing number must be a string")

@@ -31,10 +31,17 @@ class PlaidIntegration:
     def create_link_token(self, user_id: str) -> Optional[Dict[str, Any]]:
         """
         Create a link token for the client to initialize Plaid Link.
+
         Args:
             user_id (str): Unique identifier for the user.
+
         Returns:
             dict or None: Link token response.
+
+        Usage example:
+            >>> plaid = PlaidIntegration()
+            >>> response = plaid.create_link_token("user123")
+            >>> print(response)
         """
         try:
             request = LinkTokenCreateRequest(
@@ -54,10 +61,17 @@ class PlaidIntegration:
     def exchange_public_token(self, public_token: str) -> Optional[Dict[str, Any]]:
         """
         Exchange a public token for an access token.
+
         Args:
             public_token (str): The public token from Plaid Link.
+
         Returns:
             dict or None: Access token response.
+
+        Usage example:
+            >>> plaid = PlaidIntegration()
+            >>> response = plaid.exchange_public_token("public-token")
+            >>> print(response)
         """
         try:
             response = self.client.item_public_token_exchange(public_token)
@@ -70,10 +84,17 @@ class PlaidIntegration:
     def get_accounts(self, access_token: str) -> Optional[Dict[str, Any]]:
         """
         Retrieve accounts linked to the access token.
+
         Args:
             access_token (str): The access token.
+
         Returns:
             dict or None: Accounts information.
+
+        Usage example:
+            >>> plaid = PlaidIntegration()
+            >>> response = plaid.get_accounts("access-token")
+            >>> print(response)
         """
         try:
             response = self.client.auth_get(access_token)
@@ -92,13 +113,20 @@ class PlaidIntegration:
     ) -> Optional[Dict[str, Any]]:
         """
         Retrieve transactions for the given access token and date range.
+
         Args:
             access_token (str): The access token.
             start_date (str): Start date in 'YYYY-MM-DD' format.
             end_date (str): End date in 'YYYY-MM-DD' format.
             options (TransactionsGetRequestOptions, optional): Additional options.
+
         Returns:
             dict or None: Transactions information.
+
+        Usage example:
+            >>> plaid = PlaidIntegration()
+            >>> response = plaid.get_transactions("access-token", "2023-01-01", "2023-01-31")
+            >>> print(response)
         """
         try:
             request = TransactionsGetRequest(
@@ -117,10 +145,17 @@ class PlaidIntegration:
     def get_item(self, access_token: str) -> Optional[Dict[str, Any]]:
         """
         Retrieve item information for the given access token.
+
         Args:
             access_token (str): The access token.
+
         Returns:
             dict or None: Item information.
+
+        Usage example:
+            >>> plaid = PlaidIntegration()
+            >>> response = plaid.get_item("access-token")
+            >>> print(response)
         """
         try:
             request = ItemGetRequest(access_token=access_token)
@@ -134,10 +169,17 @@ class PlaidIntegration:
     def remove_item(self, access_token: str) -> Optional[Dict[str, Any]]:
         """
         Remove (unlink) an item for the given access token.
+
         Args:
             access_token (str): The access token.
+
         Returns:
             dict or None: Remove item response.
+
+        Usage example:
+            >>> plaid = PlaidIntegration()
+            >>> response = plaid.remove_item("access-token")
+            >>> print(response)
         """
         try:
             request = ItemRemoveRequest(access_token=access_token)
@@ -151,10 +193,17 @@ class PlaidIntegration:
     def invalidate_access_token(self, access_token: str) -> Optional[Dict[str, Any]]:
         """
         Invalidate (refresh) the access token.
+
         Args:
             access_token (str): The access token.
+
         Returns:
             dict or None: Invalidate access token response.
+
+        Usage example:
+            >>> plaid = PlaidIntegration()
+            >>> response = plaid.invalidate_access_token("access-token")
+            >>> print(response)
         """
         try:
             request = ItemAccessTokenInvalidateRequest(access_token=access_token)
