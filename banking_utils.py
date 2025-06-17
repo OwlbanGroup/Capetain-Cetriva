@@ -2,10 +2,12 @@ import os
 import logging
 from unittest.mock import MagicMock
 
-from generate_account_number import generate_account_number, is_valid_account_number
+from generate_account_number import (
+    generate_account_number,
+    is_valid_account_number,
+)
 from get_routing_number import get_routing_number
 from validate_routing_number import validate_routing_number
-from ach_payments import ACHPayments
 from plaid_integration import PlaidIntegration
 
 
@@ -100,7 +102,10 @@ class BankingUtils:
         """
         try:
             response = cls.ach_payments.create_payment(
-                account_number, routing_number, amount, description
+                account_number,
+                routing_number,
+                amount,
+                description,
             )
             logger.info(f"ACH payment created: {response}")
             return response

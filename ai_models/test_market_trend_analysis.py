@@ -1,11 +1,10 @@
 import unittest
 import pandas as pd
-import numpy as np
 from ai_models.market_trend_analysis import MarketTrendAnalysis
 
 
 class TestMarketTrendAnalysis(unittest.TestCase):
-
+    
     def test_download_data_success(self):
         mta_instance = MarketTrendAnalysis()
         data = mta_instance.download_data(max_retries=1, retry_delay=0)
@@ -54,13 +53,13 @@ class TestMarketTrendAnalysis(unittest.TestCase):
     def test_train_model_with_minimal_data(self):
         mta_instance = MarketTrendAnalysis()
         df = pd.DataFrame({
-            "Adj Close": [100, 102]
+            "Adj Close": [100, 102, 101, 103, 105, 107, 106]
         })
         mta_instance.data = df
         mta_instance.feature_engineering()
         model = mta_instance.train_model()
         self.assertIsNotNone(model)
-
+    
 
 if __name__ == "__main__":
     unittest.main()

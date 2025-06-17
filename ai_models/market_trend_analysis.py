@@ -39,7 +39,9 @@ class MarketTrendAnalysis:
                     sample_data = pd.DataFrame(
                         {
                             "Adj Close": np.random.normal(
-                                loc=100, scale=5, size=len(dates)
+                                loc=100,
+                                scale=5,
+                                size=len(dates),
                             )
                         },
                         index=dates,
@@ -67,16 +69,21 @@ class MarketTrendAnalysis:
         features = ["Return", "Volatility", "Momentum"]
         X = self.data[features]
         y = self.data["Target"]
+        model = RandomForestClassifier(n_estimators=100, random_state=42)
+        if len(X) < 2:
+            # Train on entire dataset without splitting if data is minimal
+            model.fit(X, y)
+            self.model = model
+            return model
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42
         )
-        model = RandomForestClassifier(n_estimators=100, random_state=42)
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         print(classification_report(y_test, y_pred))
         self.model = model
         return model
-
+            
     def reinforce_learning_placeholder(self):
         """
         Placeholder method for reinforcement learning integration.
@@ -84,6 +91,7 @@ class MarketTrendAnalysis:
         such as Q-learning, policy gradients, or other advanced techniques.
         """
         print("Reinforcement learning integration placeholder.")
+
 
 def main():
     analysis = MarketTrendAnalysis()
