@@ -9,14 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 class ACHPayments:
-    def __init__(self):
+    def __init__(self) -> None:
         # Initialize ACH payment gateway credentials/configuration here
-        self.api_url = "https://api.example-ach-gateway.com/payments"
-        self.api_key = os.getenv("ACH_API_KEY")
+        self.api_url: str = "https://api.example-ach-gateway.com/payments"
+        self.api_key: Optional[str] = os.getenv("ACH_API_KEY")
         if not self.api_key:
             logger.warning("ACH_API_KEY environment variable is not set.")
-        self.max_retries = 3
-        self.retry_delay = 2  # seconds
+        self.max_retries: int = 3
+        self.retry_delay: int = 2  # seconds
 
     def create_payment(
         self,
@@ -42,13 +42,13 @@ class ACHPayments:
             logger.error("Account number and routing number must be provided.")
             return None
 
-        payload = {
+        payload: Dict[str, Any] = {
             "account_number": account_number,
             "routing_number": routing_number,
             "amount": amount,
             "description": description,
         }
-        headers = {
+        headers: Dict[str, str] = {
             "Authorization": f"Bearer {self.api_key}" if self.api_key else "",
             "Content-Type": "application/json",
         }
@@ -62,7 +62,7 @@ class ACHPayments:
                 )
                 response = requests.post(self.api_url, json=payload, headers=headers, timeout=10)
                 response.raise_for_status()
-                payment_response = response.json()
+                payment_response: Dict[str, Any] = response.json()
                 logger.info(f"ACH payment created successfully: {payment_response}")
                 return payment_response
             except requests.RequestException as e:
@@ -84,8 +84,8 @@ class ACHPayments:
             logger.error("Transaction ID must be provided.")
             return None
 
-        status_url = f"{self.api_url}/{transaction_id}/status"
-        headers = {
+        status_url: str = f"{self.api_url}/{transaction_id}/status"
+        headers: Dict[str, str] = {
             "Authorization": f"Bearer {self.api_key}" if self.api_key else "",
         }
         try:
@@ -94,7 +94,7 @@ class ACHPayments:
                 status_url, headers=headers, timeout=10
             )
             response.raise_for_status()
-            status_response = response.json()
+            status_response: Dict[str, Any] = response.json()
             logger.info(
                 f"Payment status retrieved: {status_response}"
             )

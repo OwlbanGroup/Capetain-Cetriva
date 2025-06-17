@@ -1,6 +1,7 @@
 import os
 import logging
 from unittest.mock import MagicMock
+from typing import Optional, Dict, Any, Union
 
 from generate_account_number import (
     generate_account_number,
@@ -23,7 +24,7 @@ class BankingUtils:
         plaid_integration = PlaidIntegration()
 
     @staticmethod
-    def generate_account(length=9):
+    def generate_account(length: int = 9) -> Optional[str]:
         """
         Generate a valid bank account number.
 
@@ -31,7 +32,7 @@ class BankingUtils:
             length (int): Length of the account number.
 
         Returns:
-            str or None: Generated account number or None if validation fails.
+            Optional[str]: Generated account number or None if validation fails.
         """
         try:
             account_number = generate_account_number(length)
@@ -40,14 +41,16 @@ class BankingUtils:
                     f"Generated account number failed validation: {account_number}"
                 )
                 return None
-            logger.info(f"Generated account number: {account_number}")
+            logger.info(
+                f"Generated account number: {account_number}"
+            )
             return account_number
         except Exception as e:
             logger.error(f"Error generating account number: {e}")
             return None
 
     @staticmethod
-    def get_routing(bank_name):
+    def get_routing(bank_name: str) -> Optional[str]:
         """
         Retrieve the routing number for a given bank name.
 
@@ -55,7 +58,7 @@ class BankingUtils:
             bank_name (str): Name of the bank.
 
         Returns:
-            str or None: Routing number or None if retrieval fails.
+            Optional[str]: Routing number or None if retrieval fails.
         """
         try:
             routing_number = get_routing_number(bank_name)
@@ -66,7 +69,7 @@ class BankingUtils:
             return None
 
     @staticmethod
-    def validate_routing(routing_number):
+    def validate_routing(routing_number: str) -> bool:
         """
         Validate a routing number.
 
@@ -87,7 +90,7 @@ class BankingUtils:
             return False
 
     @classmethod
-    def create_ach_payment(cls, account_number, routing_number, amount, description=""):
+    def create_ach_payment(cls, account_number: str, routing_number: str, amount: float, description: str = "") -> Optional[Dict[str, Any]]:
         """
         Create an ACH payment.
 
@@ -98,7 +101,7 @@ class BankingUtils:
             description (str): Payment description.
 
         Returns:
-            dict or None: Payment response or None if creation fails.
+            Optional[Dict[str, Any]]: Payment response or None if creation fails.
         """
         try:
             response = cls.ach_payments.create_payment(
@@ -114,7 +117,7 @@ class BankingUtils:
             return None
 
     @classmethod
-    def get_ach_payment_status(cls, transaction_id):
+    def get_ach_payment_status(cls, transaction_id: str) -> Optional[Union[str, Dict[str, Any]]]:
         """
         Get the status of an ACH payment.
 
@@ -122,7 +125,7 @@ class BankingUtils:
             transaction_id (str): Transaction ID.
 
         Returns:
-            str or None: Payment status or None if retrieval fails.
+            Optional[Union[str, Dict[str, Any]]]: Payment status or None if retrieval fails.
         """
         try:
             status = cls.ach_payments.get_payment_status(transaction_id)
@@ -133,7 +136,7 @@ class BankingUtils:
             return None
 
     @classmethod
-    def create_plaid_link_token(cls, user_id):
+    def create_plaid_link_token(cls, user_id: str) -> Optional[Dict[str, Any]]:
         """
         Create a Plaid link token.
 
@@ -141,7 +144,7 @@ class BankingUtils:
             user_id (str): User identifier.
 
         Returns:
-            dict or None: Link token response or None if creation fails.
+            Optional[Dict[str, Any]]: Link token response or None if creation fails.
         """
         try:
             response = cls.plaid_integration.create_link_token(user_id)
@@ -152,7 +155,7 @@ class BankingUtils:
             return None
 
     @classmethod
-    def exchange_plaid_public_token(cls, public_token):
+    def exchange_plaid_public_token(cls, public_token: str) -> Optional[Dict[str, Any]]:
         """
         Exchange a Plaid public token for an access token.
 
@@ -160,7 +163,7 @@ class BankingUtils:
             public_token (str): Public token.
 
         Returns:
-            dict or None: Access token response or None if exchange fails.
+            Optional[Dict[str, Any]]: Access token response or None if exchange fails.
         """
         try:
             response = cls.plaid_integration.exchange_public_token(public_token)
@@ -171,7 +174,7 @@ class BankingUtils:
             return None
 
     @classmethod
-    def get_plaid_accounts(cls, access_token):
+    def get_plaid_accounts(cls, access_token: str) -> Optional[Dict[str, Any]]:
         """
         Retrieve Plaid accounts linked to the access token.
 
@@ -179,7 +182,7 @@ class BankingUtils:
             access_token (str): Access token.
 
         Returns:
-            dict or None: Accounts information or None if retrieval fails.
+            Optional[Dict[str, Any]]: Accounts information or None if retrieval fails.
         """
         try:
             response = cls.plaid_integration.get_accounts(access_token)

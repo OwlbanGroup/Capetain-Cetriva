@@ -4,21 +4,22 @@ import json
 import os
 import time
 import xml.etree.ElementTree as ET
+from typing import Optional, Dict, Any, Union
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-CACHE_FILE = "routing_number_cache.json"
-CACHE_TTL = 86400  # 24 hours in seconds
+CACHE_FILE: str = "routing_number_cache.json"
+CACHE_TTL: int = 86400  # 24 hours in seconds
 
 
-def load_cache():
+def load_cache() -> Dict[str, Dict[str, Union[str, float]]]:
     if os.path.exists(CACHE_FILE):
         try:
             with open(CACHE_FILE, "r") as f:
-                cache = json.load(f)
+                cache: Dict[str, Dict[str, Union[str, float]]] = json.load(f)
             # Remove expired cache entries
             current_time = time.time()
             cache = {k: v for k, v in cache.items() if current_time - v["timestamp"] < CACHE_TTL}
@@ -29,7 +30,7 @@ def load_cache():
     return {}
 
 
-def save_cache(cache):
+def save_cache(cache: Dict[str, Dict[str, Union[str, float]]]) -> None:
     try:
         with open(CACHE_FILE, "w") as f:
             json.dump(cache, f)
@@ -37,7 +38,7 @@ def save_cache(cache):
         logger.error(f"Failed to save cache: {e}")
 
 
-def parse_routing_number_from_xml(xml_text):
+def parse_routing_number_from_xml(xml_text: str) -> Optional[str]:
     try:
         root = ET.fromstring(xml_text)
         # Example: find routingNumber element in XML
@@ -49,7 +50,7 @@ def parse_routing_number_from_xml(xml_text):
     return None
 
 
-def get_routing_number(bank_name):
+def get_routing_number(bank_name: str) -> Union[str, None]:
     """
     Get the official routing number for a given bank name.
     Uses a cached local store to reduce API calls.
@@ -58,31 +59,31 @@ def get_routing_number(bank_name):
     Returns:
         str: Routing number or error message.
     """
-    cache = load_cache()
-    bank_name_lower = bank_name.lower()
+    cache: Dict[str, Dict[str, Union[str, float]]] = load_cache()
+    bank_name_lower: str = bank_name.lower()
     if bank_name_lower in cache:
         logger.info(f"Cache hit for bank: {bank_name}")
         return cache[bank_name_lower]["routing_number"]
 
     # Example API endpoint (not real, for demonstration only)
-    api_url = f"https://www.frbservices.org/EPaymentsDirectory/search?searchString={bank_name.replace(' ', '%20')}&searchType=NAME"
-    max_retries = 3
+    api_url: str = f"https://www.frbservices.org/EPaymentsDirectory/search?searchString={bank_name.replace(' ', '%20')}&searchType=NAME"
+    max_retries: int = 3
     for attempt in range(max_retries):
         try:
             response = requests.get(api_url, timeout=10)
             if response.status_code != 200:
-                error_msg = f"Failed to retrieve data from the Federal Reserve API. Status code: {response.status_code}"
+                error_msg: str = f"Failed to retrieve data from the Federal Reserve API. Status code: {response.status_code}"
                 logger.error(error_msg)
                 if attempt == max_retries - 1:
                     return error_msg
                 else:
                     time.sleep(2 ** attempt)
                     continue
-            content_type = response.headers.get('Content-Type', '')
+            content_type: str = response.headers.get('Content-Type', '')
             if 'application/json' in content_type:
                 try:
-                    data = response.json()
-                    routing_number = data.get("routingNumber", None)
+                    data: Dict[str, Any] = response.json()
+                    routing_number: Optional[str] = data.get("routingNumber", None)
                     if routing_number:
                         cache[bank_name_lower] = {"routing_number": routing_number, "timestamp": time.time()}
                         save_cache(cache)

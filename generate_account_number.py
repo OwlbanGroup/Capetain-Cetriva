@@ -1,34 +1,35 @@
 import random
 import logging
+from typing import List
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def luhn_checksum(account_number):
+def luhn_checksum(account_number: str) -> int:
     """
     Calculate the Luhn checksum for the account number.
     """
-    def digits_of(n):
+    def digits_of(n: str) -> List[int]:
         return [int(d) for d in str(n)]
     digits = digits_of(account_number)
     odd_digits = digits[-1::-2]
     even_digits = digits[-2::-2]
     total = sum(odd_digits)
     for d in even_digits:
-        total += sum(digits_of(d*2))
+        total += sum(digits_of(str(d*2)))
     return total % 10
 
 
-def is_valid_account_number(account_number):
+def is_valid_account_number(account_number: str) -> bool:
     """
     Validate the account number using Luhn checksum.
     """
     return luhn_checksum(account_number) == 0
 
 
-def generate_account_number(length=9, numeric_only=True):
+def generate_account_number(length: int = 9, numeric_only: bool = True) -> str:
     """
     Generates a valid bank account number with the specified length and format.
     Uses Luhn algorithm for checksum validation.

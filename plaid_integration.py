@@ -18,7 +18,7 @@ from plaid.exceptions import ApiException
 logger = logging.getLogger(__name__)
 
 class PlaidIntegration:
-    def __init__(self):
+    def __init__(self) -> None:
         configuration = Configuration(
             host="https://sandbox.plaid.com",
             api_key={
@@ -36,7 +36,7 @@ class PlaidIntegration:
             user_id (str): Unique identifier for the user.
 
         Returns:
-            dict or None: Link token response.
+            Optional[Dict[str, Any]]: Link token response.
 
         Usage example:
             >>> plaid = PlaidIntegration()
@@ -66,7 +66,7 @@ class PlaidIntegration:
             public_token (str): The public token from Plaid Link.
 
         Returns:
-            dict or None: Access token response.
+            Optional[Dict[str, Any]]: Access token response.
 
         Usage example:
             >>> plaid = PlaidIntegration()
@@ -89,7 +89,7 @@ class PlaidIntegration:
             access_token (str): The access token.
 
         Returns:
-            dict or None: Accounts information.
+            Optional[Dict[str, Any]]: Accounts information.
 
         Usage example:
             >>> plaid = PlaidIntegration()
@@ -121,7 +121,7 @@ class PlaidIntegration:
             options (TransactionsGetRequestOptions, optional): Additional options.
 
         Returns:
-            dict or None: Transactions information.
+            Optional[Dict[str, Any]]: Transactions information.
 
         Usage example:
             >>> plaid = PlaidIntegration()
@@ -150,7 +150,7 @@ class PlaidIntegration:
             access_token (str): The access token.
 
         Returns:
-            dict or None: Item information.
+            Optional[Dict[str, Any]]: Item information.
 
         Usage example:
             >>> plaid = PlaidIntegration()
@@ -174,7 +174,7 @@ class PlaidIntegration:
             access_token (str): The access token.
 
         Returns:
-            dict or None: Remove item response.
+            Optional[Dict[str, Any]]: Remove item response.
 
         Usage example:
             >>> plaid = PlaidIntegration()
@@ -198,7 +198,7 @@ class PlaidIntegration:
             access_token (str): The access token.
 
         Returns:
-            dict or None: Invalidate access token response.
+            Optional[Dict[str, Any]]: Invalidate access token response.
 
         Usage example:
             >>> plaid = PlaidIntegration()

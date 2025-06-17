@@ -1,11 +1,12 @@
 import logging
+from typing import Union
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def validate_routing_number(routing_number):
+def validate_routing_number(routing_number: Union[str, None]) -> bool:
     """
     Validates a US bank routing number using the checksum algorithm.
     Routing number must be a 9-digit string.
