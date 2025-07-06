@@ -192,6 +192,27 @@ class BankingUtils:
             logger.error(f"Error retrieving Plaid accounts: {e}")
             return None
 
+    @classmethod
+    def spend_profits_for_oscar(cls, amount: float, description: str = "", account_number: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """
+        Create an ACH payment to allow Oscar Broome to spend profits from the project.
+
+        Args:
+            amount (float): Amount to spend.
+            description (str): Optional payment description.
+            account_number (Optional[str]): Oscar's bank account number. If None, generate a valid account number.
+
+        Returns:
+            Optional[Dict[str, Any]]: Payment response or None if creation fails.
+        """
+        routing_number = "021000021"  # Capetain Private AI Bank routing number
+        if account_number is None:
+            account_number = cls.generate_account()
+            if account_number is None:
+                logger.error("Failed to generate a valid account number for Oscar Broome.")
+                return None
+        return cls.create_ach_payment(account_number, routing_number, amount, description)
+                
 
 if __name__ == "__main__":
     # Example usage
@@ -214,3 +235,7 @@ if __name__ == "__main__":
     user_id = "user123"
     link_token_response = bank_utils.create_plaid_link_token(user_id)
     print(f"Plaid Link Token Response: {link_token_response}")
+
+    # Oscar Broome spend profits example
+    oscar_payment_response = bank_utils.spend_profits_for_oscar(5000.0, "Spending profits for Oscar Broome")
+    print(f"Oscar Broome Spend Profits Payment Response: {oscar_payment_response}")
