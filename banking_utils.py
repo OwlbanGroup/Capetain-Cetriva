@@ -38,7 +38,8 @@ class BankingUtils:
             account_number = generate_account_number(length)
             if not is_valid_account_number(account_number):
                 logger.error(
-                    f"Generated account number failed validation: {account_number}"
+                    f"Generated account number failed validation: "
+                    f"{account_number}"
                 )
                 return None
             logger.info(
@@ -53,7 +54,7 @@ class BankingUtils:
     def get_routing(bank_name: str) -> Optional[str]:
         """
         Retrieve the routing number for a given bank name.
-
+        
         Args:
             bank_name (str): Name of the bank.
 

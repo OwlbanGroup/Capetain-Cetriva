@@ -118,6 +118,25 @@ def get_routing_number(bank_name: str) -> Union[str, None]:
                     else:
                         time.sleep(2 ** attempt)
                         continue
+            elif 'text/html' in content_type:
+                # Handle HTML response by parsing the HTML to extract routing number if possible
+                from bs4 import BeautifulSoup
+                soup = BeautifulSoup(response.text, 'html.parser')
+                # Example: find routing number in a specific tag or class (adjust as needed)
+                routing_number_elem = soup.find(text=lambda t: t and t.isdigit() and len(t) == 9)
+                if routing_number_elem:
+                    routing_number = routing_number_elem.strip()
+                    cache[bank_name_lower] = {"routing_number": routing_number, "timestamp": time.time()}
+                    save_cache(cache)
+                    return routing_number
+                else:
+                    error_msg = "Routing number not found in HTML API response."
+                    logger.error(error_msg)
+                    if attempt == max_retries - 1:
+                        return error_msg
+                    else:
+                        time.sleep(2 ** attempt)
+                        continue
             else:
                 error_msg = f"Unsupported content type: {content_type}"
                 logger.error(error_msg)
@@ -134,9 +153,8 @@ def get_routing_number(bank_name: str) -> Union[str, None]:
             else:
                 time.sleep(2 ** attempt)
                 continue
-
     return "Failed to retrieve routing number after retries."
-
+                            
 
 if __name__ == "__main__":
     bank_name = "Capetain Cetriva"
