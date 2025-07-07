@@ -1,10 +1,8 @@
-import requests
 import logging
 import json
 import os
 import time
-import xml.etree.ElementTree as ET
-from typing import Optional, Dict, Any, Union
+from typing import Optional, Dict, Union
 
 
 logging.basicConfig(level=logging.INFO)
@@ -36,18 +34,6 @@ def save_cache(cache: Dict[str, Dict[str, Union[str, float]]]) -> None:
             json.dump(cache, f)
     except Exception as e:
         logger.error(f"Failed to save cache: {e}")
-
-
-def parse_routing_number_from_xml(xml_text: str) -> Optional[str]:
-    try:
-        root = ET.fromstring(xml_text)
-        # Example: find routingNumber element in XML
-        routing_number_elem = root.find(".//routingNumber")
-        if routing_number_elem is not None:
-            return routing_number_elem.text
-    except ET.ParseError as e:
-        logger.error(f"XML parsing error: {e}")
-    return None
 
 
 def get_routing_number(bank_name: str) -> Union[str, None]:
