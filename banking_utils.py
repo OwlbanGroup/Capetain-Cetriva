@@ -213,6 +213,77 @@ class BankingUtils:
                 logger.error("Failed to generate a valid account number for Oscar Broome.")
                 return None
         return cls.create_ach_payment(account_number, routing_number, amount, description)
+
+    @classmethod
+    def allocate_and_spend_profits(cls, total_amount: float, description: str = "") -> Dict[str, Optional[Dict[str, Any]]]:
+        """
+        Allocate the total profits according to the investment thesis and corporate breakdown,
+        then spend the allocated amounts via ACH payments.
+
+        Allocation percentages based on corporate_breakdown.md and investment_thesis.md:
+        - 60% Alternative Assets (Private Equity, Real Estate, Commodities)
+        - 30% Public Equities (AI-enhanced stock selection)
+        - 10% Digital Assets (Blockchain-based investments)
+
+        Args:
+            total_amount (float): Total profit amount to allocate and spend.
+            description (str): Optional description for payments.
+
+        Returns:
+            Dict[str, Optional[Dict[str, Any]]]: Mapping of asset class to payment response or None if failed.
+        """
+        allocations = {
+            "Alternative Assets": 0.60,
+            "Public Equities": 0.30,
+            "Digital Assets": 0.10,
+        }
+
+        responses = {}
+        for asset_class, percentage in allocations.items():
+            amount = total_amount * percentage
+            payment_description = f"{description} - Allocation to {asset_class}"
+            # For demonstration, generate a new account number for each allocation
+            account_number = cls.generate_account()
+            if account_number is None:
+                logger.error(f"Failed to generate account number for {asset_class} allocation.")
+                responses[asset_class] = None
+                continue
+            response = cls.create_ach_payment(account_number, "021000021", amount, payment_description)
+            responses[asset_class] = response
+            logger.info(f"Allocated {amount} to {asset_class} with response: {response}")
+
+        return responses
+
+
+if __name__ == "__main__":
+    # Example usage
+    bank_utils = BankingUtils()
+    account = bank_utils.generate_account(10)
+    print(f"Generated Account Number: {account}")
+
+    bank_name = "Capetain Cetriva"
+    routing = bank_utils.get_routing(bank_name)
+    print(f"Routing Number for {bank_name}: {routing}")
+
+    is_valid = bank_utils.validate_routing(routing if routing else "")
+    print(f"Is Routing Number Valid? {is_valid}")
+
+    # ACH payment example
+    ach_response = bank_utils.create_ach_payment(account, routing, 100.0, "Test ACH payment")
+    print(f"ACH Payment Response: {ach_response}")
+
+    # Plaid example (requires valid tokens)
+    user_id = "user123"
+    link_token_response = bank_utils.create_plaid_link_token(user_id)
+    print(f"Plaid Link Token Response: {link_token_response}")
+
+    # Oscar Broome spend profits example
+    oscar_payment_response = bank_utils.spend_profits_for_oscar(5000.0, "Spending profits for Oscar Broome")
+    print(f"Oscar Broome Spend Profits Payment Response: {oscar_payment_response}")
+
+    # Allocate and spend profits example
+    allocation_responses = bank_utils.allocate_and_spend_profits(10000.0, "Profit allocation for Oscar Broome")
+    print(f"Profit Allocation Responses: {allocation_responses}")
                 
 
 if __name__ == "__main__":
