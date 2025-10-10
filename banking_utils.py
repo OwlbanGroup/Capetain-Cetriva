@@ -10,6 +10,8 @@ from generate_account_number import (
 from get_routing_number import get_routing_number
 from validate_routing_number import validate_routing_number
 from plaid_integration import PlaidIntegration
+from ai_models.market_trend_analysis import MarketTrendAnalysis
+from nvidia_integration import nvidia_integration
 
 
 logging.basicConfig(level=logging.INFO)
@@ -241,6 +243,20 @@ class BankingUtils:
         responses = {}
         for asset_class, percentage in allocations.items():
             amount = total_amount * percentage
+            if asset_class == "Public Equities":
+                # AI-enhanced stock selection using GPU-accelerated model
+                nvidia_integration.log_project_status("Equity Allocation")
+                mta = MarketTrendAnalysis(ticker="NVDA")  # NVIDIA stock for AI theme
+                mta.download_data()
+                mta.feature_engineering()
+                mta.train_model()
+                # Predict trend on latest data (simplified: if last target is 1, positive)
+                if mta.data is not None and not mta.data.empty and mta.data["Target"].iloc[-1] == 1:
+                    logger.info("AI prediction: Positive trend for NVDA, allocating full equities.")
+                else:
+                    amount *= 0.5  # Reduce allocation if negative trend
+                    logger.info("AI prediction: Negative trend for NVDA, reducing equities allocation.")
+
             payment_description = f"{description} - Allocation to {asset_class}"
             # For demonstration, generate a new account number for each allocation
             account_number = cls.generate_account()
@@ -284,30 +300,3 @@ if __name__ == "__main__":
     # Allocate and spend profits example
     allocation_responses = bank_utils.allocate_and_spend_profits(10000.0, "Profit allocation for Oscar Broome")
     print(f"Profit Allocation Responses: {allocation_responses}")
-                
-
-if __name__ == "__main__":
-    # Example usage
-    bank_utils = BankingUtils()
-    account = bank_utils.generate_account(10)
-    print(f"Generated Account Number: {account}")
-
-    bank_name = "Capetain Cetriva"
-    routing = bank_utils.get_routing(bank_name)
-    print(f"Routing Number for {bank_name}: {routing}")
-
-    is_valid = bank_utils.validate_routing(routing if routing else "")
-    print(f"Is Routing Number Valid? {is_valid}")
-
-    # ACH payment example
-    ach_response = bank_utils.create_ach_payment(account, routing, 100.0, "Test ACH payment")
-    print(f"ACH Payment Response: {ach_response}")
-
-    # Plaid example (requires valid tokens)
-    user_id = "user123"
-    link_token_response = bank_utils.create_plaid_link_token(user_id)
-    print(f"Plaid Link Token Response: {link_token_response}")
-
-    # Oscar Broome spend profits example
-    oscar_payment_response = bank_utils.spend_profits_for_oscar(5000.0, "Spending profits for Oscar Broome")
-    print(f"Oscar Broome Spend Profits Payment Response: {oscar_payment_response}")

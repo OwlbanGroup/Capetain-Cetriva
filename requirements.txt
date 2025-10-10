@@ -1,0 +1,6 @@
+torch
+pynvml
+pandas
+numpy
+scikit-learn
+yfinance
