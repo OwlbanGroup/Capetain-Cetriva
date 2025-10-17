@@ -1,3 +1,8 @@
+"""
+Banking utilities module for handling account generation, routing, validation,
+ACH payments, and Plaid integrations.
+"""
+
 import os
 import logging
 from unittest.mock import MagicMock
@@ -10,20 +15,25 @@ from generate_account_number import (
 from get_routing_number import get_routing_number
 from validate_routing_number import validate_routing_number
 from plaid_integration import PlaidIntegration
+from ach_payments import ACHPayments
 from ai_models.market_trend_analysis import MarketTrendAnalysis
 from nvidia_integration import nvidia_integration
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class BankingUtils:
+    """
+    A utility class for banking operations including account generation,
+    routing number retrieval, validation, ACH payments, and Plaid integrations.
+    """
     # Patch PlaidIntegration to avoid real API calls during tests
-    if os.getenv('TESTING') == '1':
-        plaid_integration = MagicMock()
-    else:
-        plaid_integration = PlaidIntegration()
+    plaid_integration: Union[MagicMock, PlaidIntegration] = (
+        MagicMock() if os.getenv('TESTING') == '1' else PlaidIntegration()
+    )
+
+    ach_payments = ACHPayments()
 
     @staticmethod
     def generate_account(length: int = 9) -> Optional[str]:
@@ -40,16 +50,14 @@ class BankingUtils:
             account_number = generate_account_number(length)
             if not is_valid_account_number(account_number):
                 logger.error(
-                    f"Generated account number failed validation: "
-                    f"{account_number}"
+                    "Generated account number failed validation: %s",
+                    account_number
                 )
                 return None
-            logger.info(
-                f"Generated account number: {account_number}"
-            )
+            logger.info("Generated account number: %s", account_number)
             return account_number
-        except Exception as e:
-            logger.error(f"Error generating account number: {e}")
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.error("Error generating account number: %s", e)
             return None
 
     @staticmethod
@@ -65,10 +73,10 @@ class BankingUtils:
         """
         try:
             routing_number = get_routing_number(bank_name)
-            logger.info(f"Retrieved routing number for {bank_name}: {routing_number}")
+            logger.info("Retrieved routing number for %s: %s", bank_name, routing_number)
             return routing_number
-        except Exception as e:
-            logger.error(f"Error retrieving routing number for {bank_name}: {e}")
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.error("Error retrieving routing number for %s: %s", bank_name, e)
             return None
 
     @staticmethod
@@ -85,11 +93,12 @@ class BankingUtils:
         try:
             is_valid = validate_routing_number(routing_number)
             logger.info(
-                f"Routing number {routing_number} validation result: {is_valid}"
+                "Routing number %s validation result: %s",
+                routing_number, is_valid
             )
             return is_valid
         except Exception as e:
-            logger.error(f"Error validating routing number {routing_number}: {e}")
+            logger.error("Error validating routing number %s: %s", routing_number, e)
             return False
 
     @classmethod
@@ -113,10 +122,10 @@ class BankingUtils:
                 amount,
                 description,
             )
-            logger.info(f"ACH payment created: {response}")
+            logger.info("ACH payment created: %s", response)
             return response
         except Exception as e:
-            logger.error(f"Error creating ACH payment: {e}")
+            logger.error("Error creating ACH payment: %s", e)
             return None
 
     @classmethod
@@ -132,10 +141,10 @@ class BankingUtils:
         """
         try:
             status = cls.ach_payments.get_payment_status(transaction_id)
-            logger.info(f"ACH payment status: {status}")
+            logger.info("ACH payment status: %s", status)
             return status
         except Exception as e:
-            logger.error(f"Error getting ACH payment status: {e}")
+            logger.error("Error getting ACH payment status: %s", e)
             return None
 
     @classmethod
@@ -151,10 +160,10 @@ class BankingUtils:
         """
         try:
             response = cls.plaid_integration.create_link_token(user_id)
-            logger.info(f"Plaid link token created: {response}")
+            logger.info("Plaid link token created: %s", response)
             return response
         except Exception as e:
-            logger.error(f"Error creating Plaid link token: {e}")
+            logger.error("Error creating Plaid link token: %s", e)
             return None
 
     @classmethod
@@ -170,10 +179,10 @@ class BankingUtils:
         """
         try:
             response = cls.plaid_integration.exchange_public_token(public_token)
-            logger.info(f"Plaid public token exchanged: {response}")
+            logger.info("Plaid public token exchanged: %s", response)
             return response
         except Exception as e:
-            logger.error(f"Error exchanging Plaid public token: {e}")
+            logger.error("Error exchanging Plaid public token: %s", e)
             return None
 
     @classmethod
@@ -189,10 +198,10 @@ class BankingUtils:
         """
         try:
             response = cls.plaid_integration.get_accounts(access_token)
-            logger.info(f"Plaid accounts retrieved: {response}")
+            logger.info("Plaid accounts retrieved: %s", response)
             return response
         except Exception as e:
-            logger.error(f"Error retrieving Plaid accounts: {e}")
+            logger.error("Error retrieving Plaid accounts: %s", e)
             return None
 
     @classmethod
@@ -240,7 +249,7 @@ class BankingUtils:
             "Digital Assets": 0.10,
         }
 
-        responses = {}
+        responses: Dict[str, Optional[Dict[str, Any]]] = {}
         for asset_class, percentage in allocations.items():
             amount = total_amount * percentage
             if asset_class == "Public Equities":
@@ -257,16 +266,16 @@ class BankingUtils:
                     amount *= 0.5  # Reduce allocation if negative trend
                     logger.info("AI prediction: Negative trend for NVDA, reducing equities allocation.")
 
-            payment_description = f"{description} - Allocation to {asset_class}"
+            payment_description = "%s - Allocation to %s" % (description, asset_class)
             # For demonstration, generate a new account number for each allocation
             account_number = cls.generate_account()
             if account_number is None:
-                logger.error(f"Failed to generate account number for {asset_class} allocation.")
+                logger.error("Failed to generate account number for %s allocation.", asset_class)
                 responses[asset_class] = None
                 continue
             response = cls.create_ach_payment(account_number, "021000021", amount, payment_description)
             responses[asset_class] = response
-            logger.info(f"Allocated {amount} to {asset_class} with response: {response}")
+            logger.info("Allocated %s to %s with response: %s", amount, asset_class, response)
 
         return responses
 
@@ -285,8 +294,11 @@ if __name__ == "__main__":
     print(f"Is Routing Number Valid? {is_valid}")
 
     # ACH payment example
-    ach_response = bank_utils.create_ach_payment(account, routing, 100.0, "Test ACH payment")
-    print(f"ACH Payment Response: {ach_response}")
+    if account and routing:
+        ach_response = bank_utils.create_ach_payment(account, routing, 100.0, "Test ACH payment")
+        print(f"ACH Payment Response: {ach_response}")
+    else:
+        print("Cannot create ACH payment: missing account or routing number")
 
     # Plaid example (requires valid tokens)
     user_id = "user123"

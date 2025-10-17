@@ -1,7 +1,13 @@
 import torch
 import logging
 from typing import Dict, Any, Optional
-import pynvml
+try:
+    import pynvml
+except ImportError:
+    try:
+        import nvidia_ml_py as pynvml
+    except ImportError:
+        pynvml = None
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,7 @@
 torch
-pynvml
+nvidia-ml-py
 pandas
 numpy
 scikit-learn
 yfinance
+plaid-python
