@@ -71,6 +71,13 @@ class ACHPayments:
                     time.sleep(self.retry_delay)
                 else:
                     return {"status": "failure", "error": str(e)}
+            except Exception as e:
+                logger.error(f"Unexpected error creating ACH payment on attempt {attempt}: {e}")
+                if attempt < self.max_retries:
+                    time.sleep(self.retry_delay)
+                else:
+                    return {"status": "failure", "error": str(e)}
+        return {"status": "failure", "error": "All attempts failed"}
 
     def get_payment_status(self, transaction_id: str) -> Optional[Dict[str, Any]]:
         """
@@ -101,4 +108,7 @@ class ACHPayments:
             return status_response
         except requests.RequestException as e:
             logger.error(f"Error retrieving payment status: {e}")
+            return {"status": "failure", "error": str(e)}
+        except Exception as e:
+            logger.error(f"Unexpected error retrieving payment status: {e}")
             return {"status": "failure", "error": str(e)}
