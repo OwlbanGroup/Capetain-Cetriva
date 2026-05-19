@@ -1,8 +1,10 @@
-import logging
+"""Lookup and cache routing numbers for banks."""
+
 import json
+import logging
 import os
 import time
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, TypedDict, cast
 
 
 logging.basicConfig(level=logging.INFO)
@@ -13,50 +15,56 @@ CACHE_FILE: str = "routing_number_cache.json"
 CACHE_TTL: int = 86400  # 24 hours in seconds
 
 
-def load_cache() -> Dict[str, Dict[str, Union[str, float, int]]]:
-    if os.path.exists(CACHE_FILE):
-        try:
-            with open(CACHE_FILE, "r") as f:
-                cache: Dict[str, Dict[str, Union[str, float, int]]] = json.load(f)
-            # Remove expired cache entries
-            current_time = time.time()
-            cache = {k: v for k, v in cache.items() if current_time - float(v["timestamp"]) < CACHE_TTL}
-            return cache
-        except Exception as e:
-            logger.error(f"Failed to load cache: {e}")
-            return {}
-    return {}
+class CacheEntry(TypedDict):
+    """Cached routing number metadata."""
+
+    routing_number: str
+    timestamp: int
 
 
-def save_cache(cache: Dict[str, Dict[str, Union[str, float, int]]]) -> None:
+def load_cache() -> Dict[str, CacheEntry]:
+    """Load the routing number cache and discard expired entries."""
+    if not os.path.exists(CACHE_FILE):
+        return {}
+
     try:
-        with open(CACHE_FILE, "w") as f:
-            json.dump(cache, f)
-    except Exception as e:
-        logger.error(f"Failed to save cache: {e}")
+        with open(CACHE_FILE, "r", encoding="utf-8") as file_handle:
+            cache = cast(Dict[str, CacheEntry], json.load(file_handle))
+    except (OSError, json.JSONDecodeError, TypeError, ValueError):
+        logger.exception("Failed to load cache")
+        return {}
+
+    current_time = time.time()
+    return {
+        cache_key: entry
+        for cache_key, entry in cache.items()
+        if current_time - float(entry["timestamp"]) < CACHE_TTL
+    }
+
+
+def save_cache(cache: Dict[str, CacheEntry]) -> None:
+    """Persist the routing number cache to disk."""
+    try:
+        with open(CACHE_FILE, "w", encoding="utf-8") as file_handle:
+            json.dump(cache, file_handle)
+    except OSError:
+        logger.exception("Failed to save cache")
 
 
 def get_routing_number(bank_name: str) -> Optional[str]:
-    """
-    Get the official routing number for a given bank name.
-    Uses a cached local store to reduce API calls.
-    Args:
-        bank_name (str): Name of the bank.
-    Returns:
-        str: Routing number or error message.
-    """
-    cache: Dict[str, Dict[str, Union[str, float, int]]] = load_cache()
+    """Get the official routing number for a given bank name."""
+    cache: Dict[str, CacheEntry] = load_cache()
     bank_name_lower: str = bank_name.lower()
-    if bank_name_lower in cache:
-        logger.info(f"Cache hit for bank: {bank_name}")
-        routing_number = cache[bank_name_lower]["routing_number"]
-        if isinstance(routing_number, str):
-            return routing_number
-        else:
-            return None
 
-    # Use a local mock database for routing numbers to avoid API dependency in tests
-    mock_routing_numbers = {
+    if bank_name_lower in cache:
+        logger.info("Cache hit for bank: %s", bank_name)
+        cached_routing_number = cache[bank_name_lower]["routing_number"]
+        if isinstance(cached_routing_number, str):
+            return cached_routing_number
+        return None
+
+    # Use a local mock database for routing numbers to avoid API dependency in tests.
+    mock_routing_numbers: Dict[str, Optional[str]] = {
         "capetain cetriva": "021000021",
         "test bank": "123456789",
         "new bank": "987654321",
@@ -64,17 +72,20 @@ def get_routing_number(bank_name: str) -> Optional[str]:
         "bad json bank": None,
     }
 
-    routing_number = mock_routing_numbers.get(bank_name_lower)
-    if routing_number is not None:
-        cache[bank_name_lower] = {"routing_number": routing_number, "timestamp": int(time.time())}
+    mock_routing_number = mock_routing_numbers.get(bank_name_lower)
+    if isinstance(mock_routing_number, str):
+        cache[bank_name_lower] = {
+            "routing_number": mock_routing_number,
+            "timestamp": int(time.time()),
+        }
         save_cache(cache)
-        return str(routing_number)
-    else:
-        logger.error("Routing number for bank '%s' not found in local database.", bank_name)
-        return None
-                            
+        return mock_routing_number
+
+    logger.error("Routing number for bank '%s' not found in local database.", bank_name)
+    return None
+
 
 if __name__ == "__main__":
-    bank_name = "Capetain Cetriva"
-    result = get_routing_number(bank_name)
-    print(f"Routing number search result for '{bank_name}': {result}")
+    sample_bank_name = "Capetain Cetriva"
+    result = get_routing_number(sample_bank_name)
+    print(f"Routing number search result for '{sample_bank_name}': {result}")
