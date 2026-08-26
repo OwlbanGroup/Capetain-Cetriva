@@ -51,7 +51,7 @@ class PlaidIntegration:
                 user=LinkTokenCreateRequestUser(client_user_id=user_id),
                 client_name="Capetain Cetriva",
                 products=[Products("auth"), Products("transactions")],
-                country_codes=[CountryCode.US],
+                country_codes=[CountryCode("US")],
                 language="en"
             )
             response = self.client.link_token_create(request)
