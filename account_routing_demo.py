@@ -28,4 +28,44 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main()flowchart TD
+    subgraph Cluster["OpenShift Cluster (RHEL CoreOS)"]
+        direction TB
+
+        subgraph Virt["OpenShift Virtualization (KubeVirt)"]
+            VM1["Legacy VM App"]
+            VM2["Compliance VM"]
+        end
+
+        subgraph Containers["Blackbox AI Container Layer"]
+            BBAPI["Blackbox Core API"]
+            EXTAPI["Extensions API"]
+            PAY["Payroll Engine"]
+            FRAUD["Fraud Detection"]
+            CALLBACK["Callback Handler Engine"]
+        end
+
+        subgraph GPU["GPU AI Layer"]
+            TRITON["Triton Inference Server"]
+            ERA["Blackbox AI Era Engines"]
+        end
+
+        NET["OpenShift Networking (Service/Route/Ingress)"]
+        GITOPS["ArgoCD GitOps Pipeline"]
+        PIPE["Tekton CI/CD"]
+    end
+
+    VM1 --> NET
+    VM2 --> NET
+    BBAPI --> NET
+    EXTAPI --> NET
+    PAY --> NET
+    FRAUD --> NET
+    CALLBACK --> NET
+
+    NET --> TRITON
+    NET --> ERA
+
+    GITOPS --> Virt
+    GITOPS --> Containers
+    GITOPS --> GPU
