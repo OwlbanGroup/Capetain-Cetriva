@@ -69,3 +69,57 @@ if __name__ == "__main__":
     GITOPS --> Virt
     GITOPS --> Containers
     GITOPS --> GPU
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: legacy-financial-app
+spec:
+  running: true
+  template:
+    spec:
+      domain:
+        cpu:
+          cores: 2
+        devices:
+          disks:
+            - name: rootdisk
+              disk:
+                bus: virtio
+      volumes:
+        - name: rootdisk
+          containerDisk:
+            image: quay.io/blackbox/legacy-financial-app-vm:latest
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: financial-app-modern
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: financial-app-modern
+  template:
+    metadata:
+      labels:
+        app: financial-app-modern
+    spec:
+      containers:
+        - name: app
+          image: quay.io/blackbox/financial-app-container:latest
+# Switch target by changing this label
+appMode: vm   # or "container"
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blackbox-modernization
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/OwlbanGroup/blackbox-gitops
+    path: apps
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
