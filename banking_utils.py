@@ -14,7 +14,10 @@ from generate_account_number import (
 )
 from get_routing_number import get_routing_number
 from validate_routing_number import validate_routing_number
-from plaid_integration import PlaidIntegration
+try:
+    from plaid_integration import PlaidIntegration
+except ImportError:  # pragma: no cover - plaid SDK optional in some environments
+    PlaidIntegration = None  # type: ignore
 from ach_payments import ACHPayments
 from ai_models.market_trend_analysis import MarketTrendAnalysis
 from nvidia_integration import nvidia_integration
@@ -29,8 +32,10 @@ class BankingUtils:
     routing number retrieval, validation, ACH payments, and Plaid integrations.
     """
     # Patch PlaidIntegration to avoid real API calls during tests
-    plaid_integration: Union[MagicMock, PlaidIntegration] = (
-        MagicMock() if os.getenv('TESTING') == '1' else PlaidIntegration()
+    plaid_integration: Union[MagicMock, Any] = (
+        MagicMock()
+        if os.getenv('TESTING') == '1' or PlaidIntegration is None
+        else PlaidIntegration()
     )
 
     ach_payments = ACHPayments()
@@ -75,7 +80,7 @@ class BankingUtils:
             routing_number = get_routing_number(bank_name)
             logger.info("Retrieved routing number for %s: %s", bank_name, routing_number)
             return routing_number
-        except (ValueError, KeyError) as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error retrieving routing number for %s: %s", bank_name, e)
             return None
 
