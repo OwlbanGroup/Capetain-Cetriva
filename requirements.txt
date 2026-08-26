@@ -7,6 +7,9 @@ pandas>=2.0
 scikit-learn>=1.3
 yfinance>=0.2
 requests>=2.31
+# Security: PYSEC-2026-3447 is fixed in setuptools 83.0.0; it arrives as a
+# transitive dependency of torch, so we force an upgraded floor here.
+setuptools>=83.0.0
 # plaid-python >= 13 uses the model-constructor style this code targets,
 # e.g. Products("auth") / CountryCode("US").
 plaid-python>=13.0
