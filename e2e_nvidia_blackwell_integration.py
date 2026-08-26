@@ -46,7 +46,7 @@ class E2ENVIDIAIntegration:
 
         # Check GPU availability and Blackwell compatibility
         gpu_info = self.nvidia.get_gpu_info()
-        logger.info(f"GPU Info: {gpu_info}")
+        logger.info("GPU Info: %s", gpu_info)
 
         if not gpu_info['gpu_available']:
             logger.warning(
@@ -71,23 +71,26 @@ class E2ENVIDIAIntegration:
         """
         Run GPU-accelerated market trend analysis.
         """
-        logger.info(f"Running market trend analysis for {ticker}...")
+        logger.info("Running market trend analysis for %s...", ticker)
 
         self.market_analysis = MarketTrendAnalysis(ticker=ticker)
 
         # Download and prepare data
         data = self.market_analysis.download_data()
-        logger.info(f"Downloaded {len(data)} data points for {ticker}")
+        if data is None or data.empty:
+            logger.warning("No data available for %s after download.", ticker)
+            return {"error": "No data available"}
+        logger.info("Downloaded %d data points for %s", len(data), ticker)
 
         # Feature engineering
         features = self.market_analysis.feature_engineering()
-        logger.info(f"Engineered features: {list(features.columns)}")
+        logger.info("Engineered features: %s", list(features.columns))
 
         # Train model on GPU
         start_time = time.time()
         model = self.market_analysis.train_model(epochs=100, batch_size=32)
         training_time = time.time() - start_time
-        logger.info(".2f")
+        logger.info("Model trained in %.2f seconds", training_time)
 
         # Run reinforcement learning
         self.market_analysis.reinforce_learning_placeholder(episodes=50)
@@ -97,7 +100,7 @@ class E2ENVIDIAIntegration:
         if self.market_analysis.data is not None and not self.market_analysis.data.empty:
             latest_target = self.market_analysis.data["Target"].iloc[-1]
             prediction = "Positive" if latest_target == 1 else "Negative"
-            logger.info(f"Latest AI prediction for {ticker}: {prediction}")
+            logger.info("Latest AI prediction for %s: %s", ticker, prediction)
             return {
                 "ticker": ticker,
                 "data_points": len(data),
@@ -113,7 +116,10 @@ class E2ENVIDIAIntegration:
         """
         Execute AI-driven banking operations including profit allocation.
         """
-        logger.info(f"Executing AI-driven banking operations for ${total_profits} profits...")
+        logger.info(
+            "Executing AI-driven banking operations for $%s profits...",
+            total_profits,
+        )
 
         # Generate account and routing numbers
         account = self.banking_utils.generate_account()
@@ -123,14 +129,22 @@ class E2ENVIDIAIntegration:
             logger.error("Failed to generate banking credentials.")
             return {"error": "Banking setup failed"}
 
-        logger.info(f"Generated account: {account}, routing: {routing}")
+        logger.info("Generated account: %s, routing: %s", account, routing)
 
         # Allocate and spend profits with AI insights
-        allocations = self.banking_utils.allocate_and_spend_profits(total_profits, "AI-optimized allocation")
+        allocations = self.banking_utils.allocate_and_spend_profits(
+            total_profits, "AI-optimized allocation"
+        )
 
         # Log allocation results
-        successful_allocations = sum(1 for resp in allocations.values() if resp is not None)
-        logger.info(f"Successfully allocated profits to {successful_allocations}/{len(allocations)} categories")
+        successful_allocations = sum(
+            1 for resp in allocations.values() if resp is not None
+        )
+        logger.info(
+            "Successfully allocated profits to %d/%d categories",
+            successful_allocations,
+            len(allocations),
+        )
 
         return {
             "account": account,
@@ -139,13 +153,15 @@ class E2ENVIDIAIntegration:
             "total_profits": total_profits
         }
 
-    def run_full_pipeline(self, ticker: str = "NVDA", total_profits: float = 10000.0) -> Dict[str, Any]:
+    def run_full_pipeline(
+        self, ticker: str = "NVDA", total_profits: float = 10000.0
+    ) -> Dict[str, Any]:
         """
         Run the complete E2E pipeline: NVIDIA init -> Market Analysis -> Banking Operations.
         """
         logger.info("Starting full E2E NVIDIA Blackwell pipeline...")
 
-        results = {}
+        results: Dict[str, Any] = {}
 
         # Step 1: Initialize NVIDIA system
         if not self.initialize_system():
@@ -175,6 +191,37 @@ class E2ENVIDIAIntegration:
         logger.info("Shutdown complete.")
 
 
+def _print_market_summary(market: Dict[str, Any]) -> None:
+    """Print the market analysis portion of the pipeline summary."""
+    if "error" in market:
+        print(f"✗ Market Analysis failed: {market['error']}")
+        return
+    prediction = market.get("prediction", "N/A")
+    ticker = market.get("ticker", "N/A")
+    print(f"✓ Market Analysis: {prediction} trend for {ticker}")
+    training_time = market.get("training_time", 0)
+    print(f"  Model training time: {training_time:.2f}s")
+
+
+def _print_banking_summary(banking: Dict[str, Any]) -> None:
+    """Print the banking operations portion of the pipeline summary."""
+    if "error" in banking:
+        print(f"✗ Banking Operations failed: {banking['error']}")
+        return
+    print(f"✓ Banking Operations: Account {banking.get('account', 'N/A')[:4]}****")
+    allocation_pct = {
+        "Alternative Assets": 0.6,
+        "Public Equities": 0.3,
+        "Digital Assets": 0.1,
+    }
+    allocations = banking.get("allocations", {})
+    total_profits = banking.get("total_profits", 0)
+    for category, response in allocations.items():
+        status = "✓" if response else "✗"
+        amount = total_profits * allocation_pct.get(category, 0)
+        print(f"  {status} {category}: ${amount:.2f}")
+
+
 def main():
     """
     Main entry point for the E2E NVIDIA Blackwell integration demo.
@@ -194,32 +241,13 @@ def main():
             print(f"Pipeline failed: {results['error']}")
         else:
             print("✓ NVIDIA System Initialized")
-            market = results.get("market_analysis", {})
-            if "error" not in market:
-                print(f"✓ Market Analysis: {market.get('prediction', 'N/A')} trend for {market.get('ticker', 'N/A')}")
-                print(".2f")
-            else:
-                print(f"✗ Market Analysis failed: {market['error']}")
-
-            banking = results.get("banking_operations", {})
-            if "error" not in banking:
-                print(f"✓ Banking Operations: Account {banking.get('account', 'N/A')[:4]}****")
-                allocations = banking.get("allocations", {})
-                for category, response in allocations.items():
-                    status = "✓" if response else "✗"
-                    allocation_pct = {
-                        "Alternative Assets": 0.6,
-                        "Public Equities": 0.3,
-                        "Digital Assets": 0.1,
-                    }[category]
-                    print(f"  {status} {category}: ${banking.get('total_profits', 0) * allocation_pct:.2f}")
-            else:
-                print(f"✗ Banking Operations failed: {banking['error']}")
+            _print_market_summary(results.get("market_analysis", {}))
+            _print_banking_summary(results.get("banking_operations", {}))
 
         print("="*60)
 
-    except Exception as e:
-        logger.error(f"E2E pipeline encountered an error: {e}")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.exception("E2E pipeline encountered an error: %s", e)
         print(f"Error: {e}")
 
     finally:
