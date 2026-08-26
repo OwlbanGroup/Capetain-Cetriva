@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    # Weekly vulnerability rescan (Mondays 06:00 UTC)
+    - cron: "0 6 * * 1"
 
 permissions:
   contents: read
@@ -77,3 +80,27 @@ jobs:
           # all external calls are mocked in the test suite.
           ACH_API_KEY: test-ci-key
         run: python -m pytest -q --no-header
+
+  security:
+    name: Security (pip-audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Informational while newly introduced: flip to blocking once any
+    # reported advisories have been triaged or waived.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pip-audit
+
+      - name: Audit dependencies for known vulnerabilities
+        run: python -m pip_audit
