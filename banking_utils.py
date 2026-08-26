@@ -69,7 +69,7 @@ class BankingUtils:
     def get_routing(bank_name: str) -> Optional[str]:
         """
         Retrieve the routing number for a given bank name.
-        
+
         Args:
             bank_name (str): Name of the bank.
 
@@ -107,7 +107,13 @@ class BankingUtils:
             return False
 
     @classmethod
-    def create_ach_payment(cls, account_number: str, routing_number: str, amount: float, description: str = "") -> Optional[Dict[str, Any]]:  # pylint: disable=line-too-long
+    def create_ach_payment(
+        cls,
+        account_number: str,
+        routing_number: str,
+        amount: float,
+        description: str = "",
+    ) -> Optional[Dict[str, Any]]:
         """
         Create an ACH payment.
 
@@ -134,7 +140,9 @@ class BankingUtils:
             return None
 
     @classmethod
-    def get_ach_payment_status(cls, transaction_id: str) -> Optional[Union[str, Dict[str, Any]]]:  # pylint: disable=line-too-long
+    def get_ach_payment_status(
+        cls, transaction_id: str
+    ) -> Optional[Union[str, Dict[str, Any]]]:
         """
         Get the status of an ACH payment.
 
@@ -210,7 +218,12 @@ class BankingUtils:
             return None
 
     @classmethod
-    def spend_profits_for_oscar(cls, amount: float, description: str = "", account_number: Optional[str] = None) -> Optional[Dict[str, Any]]:  # pylint: disable=line-too-long
+    def spend_profits_for_oscar(
+        cls,
+        amount: float,
+        description: str = "",
+        account_number: Optional[str] = None,
+    ) -> Optional[Dict[str, Any]]:
         """
         Create an ACH payment to allow Oscar Broome to spend profits from the project.
 
@@ -231,7 +244,9 @@ class BankingUtils:
         return cls.create_ach_payment(account_number, routing_number, amount, description)
 
     @classmethod
-    def allocate_and_spend_profits(cls, total_amount: float, description: str = "") -> Dict[str, Optional[Dict[str, Any]]]:
+    def allocate_and_spend_profits(
+        cls, total_amount: float, description: str = ""
+    ) -> Dict[str, Optional[Dict[str, Any]]]:
         """
         Allocate the total profits according to the investment thesis and corporate breakdown,
         then spend the allocated amounts via ACH payments.
@@ -246,8 +261,9 @@ class BankingUtils:
             description (str): Optional description for payments.
 
         Returns:
-            Dict[str, Optional[Dict[str, Any]]]: Mapping of asset class to payment response or None if failed.  # pylint: disable=line-too-long
-        """  # pylint: disable=line-too-long
+            Dict[str, Optional[Dict[str, Any]]]: Mapping of asset class
+            to payment response or None if failed.
+        """
         allocations = {
             "Alternative Assets": 0.60,
             "Public Equities": 0.30,
@@ -266,10 +282,14 @@ class BankingUtils:
                 mta.train_model()
                 # Predict trend on latest data (simplified: if last target is 1, positive)
                 if mta.data is not None and not mta.data.empty and mta.data["Target"].iloc[-1] == 1:
-                    logger.info("AI prediction: Positive trend for NVDA, allocating full equities.")  # pylint: disable=line-too-long
+                    logger.info(
+                        "AI prediction: Positive trend for NVDA, allocating full equities."
+                    )
                 else:
                     amount *= 0.5  # Reduce allocation if negative trend
-                    logger.info("AI prediction: Negative trend for NVDA, reducing equities allocation.")  # pylint: disable=line-too-long
+                    logger.info(
+                        "AI prediction: Negative trend for NVDA, reducing equities allocation."
+                    )
 
             payment_description = "%s - Allocation to %s" % (description, asset_class)
             # For demonstration, generate a new account number for each allocation

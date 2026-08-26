@@ -1,0 +1,12 @@
+# Flake8 configuration for Capetain Cetriva
+# Run: python -m flake8
+[flake8]
+max-line-length = 120
+exclude =
+    .git,
+    __pycache__,
+    .mypy_cache,
+    .vscode,
+    ai_models/__pycache__
+# E402 occurrences are handled inline with "# noqa: E402" where imports
+# intentionally follow sys.path setup (ai_models/market_trend_analysis.py).

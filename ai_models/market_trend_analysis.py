@@ -11,17 +11,17 @@ import time
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-import numpy as np
-import pandas as pd
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-from torch.utils.data import DataLoader, TensorDataset
-import yfinance as yf
+import numpy as np  # noqa: E402  (after sys.path setup)
+import pandas as pd  # noqa: E402  (after sys.path setup)
+import torch  # noqa: E402  (after sys.path setup)
+import torch.nn as nn  # noqa: E402  (after sys.path setup)
+import torch.optim as optim  # noqa: E402  (after sys.path setup)
+from sklearn.metrics import classification_report  # noqa: E402  (after sys.path setup)
+from sklearn.model_selection import train_test_split  # noqa: E402  (after sys.path setup)
+from torch.utils.data import DataLoader, TensorDataset  # noqa: E402  (after sys.path setup)
+import yfinance as yf  # noqa: E402  (after sys.path setup)
 
-from nvidia_integration import nvidia_integration
+from nvidia_integration import nvidia_integration  # noqa: E402  (after sys.path setup)
 
 ADJ_CLOSE = "Adj Close"
 
@@ -173,7 +173,7 @@ class MarketTrendAnalysis:
 
         self.model = model
         return model
-            
+
     def reinforce_learning_placeholder(self, episodes=100, alpha=0.1, gamma=0.9):
         """
         Basic Q-learning for portfolio optimization (placeholder).

@@ -49,11 +49,17 @@ class E2ENVIDIAIntegration:
         logger.info(f"GPU Info: {gpu_info}")
 
         if not gpu_info['gpu_available']:
-            logger.warning("No GPU available. Running on CPU. NVIDIA Blackwell integration designed for GPU acceleration.")
+            logger.warning(
+                "No GPU available. Running on CPU. "
+                "NVIDIA Blackwell integration designed for GPU acceleration."
+            )
             # Continue with CPU for demonstration
         else:
             if not gpu_info['blackwell_compatible']:
-                logger.warning("CUDA version may not support full Blackwell features. Proceeding with available capabilities.")
+                logger.warning(
+                    "CUDA version may not support full Blackwell features. "
+                    "Proceeding with available capabilities."
+                )
 
         # Log initial project status
         self.nvidia.log_project_status("E2E NVIDIA Blackwell Integration")
@@ -201,7 +207,12 @@ def main():
                 allocations = banking.get("allocations", {})
                 for category, response in allocations.items():
                     status = "✓" if response else "✗"
-                    print(f"  {status} {category}: ${banking.get('total_profits', 0) * {'Alternative Assets': 0.6, 'Public Equities': 0.3, 'Digital Assets': 0.1}[category]:.2f}")
+                    allocation_pct = {
+                        "Alternative Assets": 0.6,
+                        "Public Equities": 0.3,
+                        "Digital Assets": 0.1,
+                    }[category]
+                    print(f"  {status} {category}: ${banking.get('total_profits', 0) * allocation_pct:.2f}")
             else:
                 print(f"✗ Banking Operations failed: {banking['error']}")
 

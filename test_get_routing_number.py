@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from get_routing_number import get_routing_number, load_cache, save_cache
+from get_routing_number import get_routing_number
 
 
 class TestGetRoutingNumber(unittest.TestCase):
