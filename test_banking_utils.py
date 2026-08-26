@@ -1,9 +1,12 @@
+"""Tests for test banking utils."""
+
 import unittest
 from unittest.mock import patch
 from banking_utils import BankingUtils
 
 
 class TestBankingUtils(unittest.TestCase):
+    """Test cases."""
     @patch('banking_utils.generate_account_number')
     @patch('banking_utils.is_valid_account_number')
     def test_generate_account_valid(self, mock_is_valid, mock_generate):

@@ -1,3 +1,5 @@
+"""Tests for test banking utils extended."""
+
 import unittest
 
 from unittest.mock import patch
@@ -5,6 +7,7 @@ from banking_utils import BankingUtils
 
 
 class TestBankingUtilsExtended(unittest.TestCase):
+    """Test cases."""
     @patch.object(BankingUtils, 'create_ach_payment')
     @patch.object(BankingUtils, 'generate_account')
     def test_spend_profits_for_oscar_with_provided_account(

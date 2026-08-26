@@ -1,9 +1,12 @@
+"""Tests for test ach payments."""
+
 import unittest
 from unittest.mock import patch, MagicMock
 from ach_payments import ACHPayments
 
 
 class TestACHPayments(unittest.TestCase):
+    """Test cases."""
     def setUp(self):
         self.ach = ACHPayments()
         self.ach.api_key = "test_api_key"  # Set a test API key

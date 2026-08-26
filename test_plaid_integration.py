@@ -1,9 +1,12 @@
+"""Tests for test plaid integration."""
+
 import unittest
 from unittest.mock import patch, MagicMock
 from plaid_integration import PlaidIntegration
 
 
 class TestPlaidIntegration(unittest.TestCase):
+    """Test cases."""
     def setUp(self):
         self.plaid = PlaidIntegration()
 

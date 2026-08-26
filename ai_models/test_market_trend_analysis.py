@@ -1,9 +1,12 @@
+"""Tests for test market trend analysis."""
+
 import unittest
 import pandas as pd
 from ai_models.market_trend_analysis import MarketTrendAnalysis
 
 
 class TestMarketTrendAnalysis(unittest.TestCase):
+    """Test cases."""
 
     def test_download_data_success(self):
         mta_instance = MarketTrendAnalysis()

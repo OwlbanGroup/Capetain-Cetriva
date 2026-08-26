@@ -1,3 +1,5 @@
+"""Tests for test performance and edge cases."""
+
 import unittest
 
 
@@ -8,6 +10,7 @@ from banking_utils import BankingUtils
 
 
 class TestPerformanceAndEdgeCases(unittest.TestCase):
+    """Test cases."""
 
     def setUp(self):
         self.bank_utils = BankingUtils()

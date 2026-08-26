@@ -7,3 +7,8 @@ ignored-modules=plaid
 # Broad exception catches are used deliberately at integration boundaries
 # (API gateways, NVML) where any failure must be converted into a logged,
 # structured error response. Each site carries an inline disable comment.
+
+[BASIC]
+# Test methods (test_*) and standard unittest fixtures do not require
+# docstrings; module and class docstrings are still enforced.
+no-docstring-rgx=^(?:test_|setUp|tearDown|setUpClass|tearDownClass|_)

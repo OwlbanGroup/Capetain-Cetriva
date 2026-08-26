@@ -1,9 +1,12 @@
+"""Tests for test banking utils edge cases."""
+
 import unittest
 from unittest.mock import patch
 from banking_utils import BankingUtils
 
 
 class TestBankingUtilsEdgeCases(unittest.TestCase):
+    """Test cases."""
 
     def test_generate_account_invalid_length_zero(self):
         account = BankingUtils.generate_account(0)

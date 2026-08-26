@@ -1,3 +1,5 @@
+"""Tests for test banking utils allocate profits."""
+
 import unittest
 
 from unittest.mock import patch
@@ -5,6 +7,7 @@ from banking_utils import BankingUtils
 
 
 class TestAllocateAndSpendProfits(unittest.TestCase):
+    """Test cases."""
 
     @patch.object(BankingUtils, 'create_ach_payment')
     @patch.object(BankingUtils, 'generate_account')
@@ -31,7 +34,7 @@ class TestAllocateAndSpendProfits(unittest.TestCase):
         self.assertIn('Public Equities', responses)
         self.assertIn('Digital Assets', responses)
 
-        for key, response in responses.items():
+        for response in responses.values():
             self.assertIsNotNone(response)
             self.assertEqual(response['status'], 'success')
 

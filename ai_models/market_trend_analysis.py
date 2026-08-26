@@ -9,19 +9,20 @@ import os
 import sys
 import time
 
+import numpy as np
+import pandas as pd
+import torch
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+from torch import nn
+from torch import optim
+from torch.utils.data import DataLoader, TensorDataset
+import yfinance as yf
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-import numpy as np  # noqa: E402  (after sys.path setup)
-import pandas as pd  # noqa: E402  (after sys.path setup)
-import torch  # noqa: E402  (after sys.path setup)
-import torch.nn as nn  # noqa: E402  (after sys.path setup)
-import torch.optim as optim  # noqa: E402  (after sys.path setup)
-from sklearn.metrics import classification_report  # noqa: E402  (after sys.path setup)
-from sklearn.model_selection import train_test_split  # noqa: E402  (after sys.path setup)
-from torch.utils.data import DataLoader, TensorDataset  # noqa: E402  (after sys.path setup)
-import yfinance as yf  # noqa: E402  (after sys.path setup)
-
-from nvidia_integration import nvidia_integration  # noqa: E402  (after sys.path setup)
+# Local import requires the repo root on sys.path (added above).
+from nvidia_integration import nvidia_integration  # noqa: E402  # pylint: disable=wrong-import-position,import-error
 
 ADJ_CLOSE = "Adj Close"
 
@@ -31,7 +32,7 @@ class TrendPredictor(nn.Module):
 
     def __init__(self, input_size=3, hidden_size=64, output_size=2):
         """Initialize the neural network layers."""
-        super(TrendPredictor, self).__init__()
+        super().__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, output_size)
@@ -95,6 +96,7 @@ class MarketTrendAnalysis:
                     )
                     self.data = sample_data
                     return sample_data
+        return None
 
     def feature_engineering(self):
         """Engineer features from stock data."""
@@ -111,7 +113,7 @@ class MarketTrendAnalysis:
         self.data = data
         return data
 
-    def train_model(self, epochs=50, batch_size=32, learning_rate=0.001):
+    def train_model(self, epochs=50, batch_size=32, learning_rate=0.001):  # pylint: disable=too-many-locals
         """Train the trend prediction model using GPU acceleration."""
         if self.data is None:
             raise ValueError("Data not prepared. Call feature_engineering() first.")
@@ -210,6 +212,7 @@ class MarketTrendAnalysis:
 
 
 def main():
+    """Run the full analysis pipeline on the default ticker."""
     analysis = MarketTrendAnalysis()
     analysis.download_data()
     analysis.feature_engineering()

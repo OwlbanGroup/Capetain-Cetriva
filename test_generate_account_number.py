@@ -1,8 +1,11 @@
+"""Tests for test generate account number."""
+
 import unittest
 from generate_account_number import generate_account_number, is_valid_account_number
 
 
 class TestGenerateAccountNumber(unittest.TestCase):
+    """Test cases."""
     def test_generate_default_length(self):
         account = generate_account_number()
         self.assertEqual(len(account), 9)
