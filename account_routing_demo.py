@@ -1,7 +1,13 @@
+"""Demo script for generating account numbers and resolving routing numbers.
+
+Uses BankingUtils to produce a valid account number for the project bank,
+retrieve its routing number, and validate that routing number.
+"""
 from banking_utils import BankingUtils
 
 
 def main():
+    """Run the account/routing demo and print the results."""
     bank_utils = BankingUtils()
 
     # Generate a valid account number
@@ -23,4 +29,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
