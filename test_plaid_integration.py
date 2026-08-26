@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from plaid_integration import PlaidIntegration
 
+
 class TestPlaidIntegration(unittest.TestCase):
     def setUp(self):
         self.plaid = PlaidIntegration()
@@ -59,6 +60,7 @@ class TestPlaidIntegration(unittest.TestCase):
 
         response = self.plaid.get_accounts('access_token')
         self.assertIsNone(response)
+
 
 if __name__ == '__main__':
     unittest.main()

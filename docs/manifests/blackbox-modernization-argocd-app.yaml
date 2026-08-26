@@ -1,0 +1,16 @@
+# ArgoCD application managing the Blackbox modernization GitOps repo
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blackbox-modernization
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/OwlbanGroup/blackbox-gitops
+    path: apps
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

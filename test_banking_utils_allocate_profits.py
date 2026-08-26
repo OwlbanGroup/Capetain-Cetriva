@@ -37,7 +37,7 @@ class TestAllocateAndSpendProfits(unittest.TestCase):
 
         self.assertEqual(mock_generate_account.call_count, 3)
         self.assertEqual(mock_create_ach_payment.call_count, 3)
-    
+
     @patch.object(BankingUtils, 'create_ach_payment')
     @patch.object(BankingUtils, 'generate_account')
     def test_allocate_and_spend_profits_account_generation_failure(

@@ -4,7 +4,7 @@ from banking_utils import BankingUtils
 
 
 class TestBankingUtilsEdgeCases(unittest.TestCase):
-    
+
     def test_generate_account_invalid_length_zero(self):
         account = BankingUtils.generate_account(0)
         self.assertIsNone(account)
@@ -21,7 +21,7 @@ class TestBankingUtilsEdgeCases(unittest.TestCase):
         mock_get_routing.side_effect = exc
         routing = BankingUtils.get_routing("Test Bank")
         self.assertIsNone(routing)
-        
+
     @patch('banking_utils.validate_routing_number')
     def test_validate_routing_exception(self, mock_validate):
         mock_validate.side_effect = Exception("Validation error")

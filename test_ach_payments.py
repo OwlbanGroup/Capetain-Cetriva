@@ -25,7 +25,6 @@ class TestACHPayments(unittest.TestCase):
         self.assertEqual(response.get("status"), "success")
         self.assertIn("transaction_id", response)
 
-    
     @patch("ach_payments.requests.post")
     def test_create_payment_failure(self, mock_post):
         mock_post.side_effect = Exception("API error")
@@ -35,8 +34,7 @@ class TestACHPayments(unittest.TestCase):
         )
         self.assertIsNotNone(response)
         self.assertEqual(response.get("status"), "failure")
-    
-        
+
     def test_create_payment_invalid_amount(self):
         response = self.ach.create_payment(
             "123456789", "987654321", -10.0, "Test payment"
@@ -67,12 +65,11 @@ class TestACHPayments(unittest.TestCase):
         response = self.ach.get_payment_status("12345")
         self.assertIsNotNone(response)
         self.assertEqual(response.get("status"), "failure")
-    
+
     def test_get_payment_status_missing_transaction_id(self):
         response = self.ach.get_payment_status("")
 
         self.assertIsNone(response)
-
 
 
 if __name__ == "__main__":

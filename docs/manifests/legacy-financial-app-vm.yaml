@@ -1,0 +1,21 @@
+# Legacy financial app running as a KubeVirt virtual machine
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: legacy-financial-app
+spec:
+  running: true
+  template:
+    spec:
+      domain:
+        cpu:
+          cores: 2
+        devices:
+          disks:
+            - name: rootdisk
+              disk:
+                bus: virtio
+      volumes:
+        - name: rootdisk
+          containerDisk:
+            image: quay.io/blackbox/legacy-financial-app-vm:latest

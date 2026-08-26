@@ -4,7 +4,7 @@ from ai_models.market_trend_analysis import MarketTrendAnalysis
 
 
 class TestMarketTrendAnalysis(unittest.TestCase):
-    
+
     def test_download_data_success(self):
         mta_instance = MarketTrendAnalysis()
         data = mta_instance.download_data(max_retries=1, retry_delay=0)
@@ -59,7 +59,7 @@ class TestMarketTrendAnalysis(unittest.TestCase):
         mta_instance.feature_engineering()
         model = mta_instance.train_model()
         self.assertIsNotNone(model)
-    
+
 
 if __name__ == "__main__":
     unittest.main()

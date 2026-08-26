@@ -1,0 +1,31 @@
+# Modernized container-based financial app.
+# Switch target by changing this label: appMode: vm or "container"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: financial-app-modern
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: financial-app-modern
+  template:
+    metadata:
+      labels:
+        app: financial-app-modern
+    spec:
+      # The container app does not use the Kubernetes API; disable token
+      # automounting to reduce the blast radius of a pod compromise.
+      automountServiceAccountToken: false
+      containers:
+        - name: app
+          image: quay.io/blackbox/financial-app-container:v1.0.0  # pinned tag
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+              ephemeral-storage: "1Gi"
+            limits:
+              cpu: "1"
+              memory: 512Mi
+

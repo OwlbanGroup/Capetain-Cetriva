@@ -102,7 +102,7 @@ class BankingUtils:
                 routing_number, is_valid
             )
             return is_valid
-        except (ValueError, TypeError) as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error validating routing number %s: %s", routing_number, e)
             return False
 

@@ -11,6 +11,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
 class NVIDIAIntegration:
     """
     Handles NVIDIA Blackwell integration for GPU acceleration, monitoring, and control.
@@ -104,6 +105,7 @@ class NVIDIAIntegration:
         if self.nvml_available:
             pynvml.nvmlShutdown()
             logger.info("NVIDIA NVML shutdown.")
+
 
 # Singleton instance for global use
 nvidia_integration = NVIDIAIntegration()

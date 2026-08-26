@@ -303,4 +303,67 @@ AUM_TOTAL = 150_000_000
 
 ---
 
+## OpenShift Deployment Topology
+
+The financial application runs on an OpenShift cluster in two modes — a legacy
+KubeVirt virtual machine and a modernized container deployment — managed via
+ArgoCD GitOps.
+
+```mermaid
+flowchart TD
+    subgraph Cluster["OpenShift Cluster (RHEL CoreOS)"]
+        direction TB
+
+        subgraph Virt["OpenShift Virtualization (KubeVirt)"]
+            VM1["Legacy VM App"]
+            VM2["Compliance VM"]
+        end
+
+        subgraph Containers["Blackbox AI Container Layer"]
+            BBAPI["Blackbox Core API"]
+            EXTAPI["Extensions API"]
+            PAY["Payroll Engine"]
+            FRAUD["Fraud Detection"]
+            CALLBACK["Callback Handler Engine"]
+        end
+
+        subgraph GPU["GPU AI Layer"]
+            TRITON["Triton Inference Server"]
+            ERA["Blackbox AI Era Engines"]
+        end
+
+        NET["OpenShift Networking (Service/Route/Ingress)"]
+        GITOPS["ArgoCD GitOps Pipeline"]
+        PIPE["Tekton CI/CD"]
+    end
+
+    VM1 --> NET
+    VM2 --> NET
+    BBAPI --> NET
+    EXTAPI --> NET
+    PAY --> NET
+    FRAUD --> NET
+    CALLBACK --> NET
+
+    NET --> TRITON
+    NET --> ERA
+
+    GITOPS --> Virt
+    GITOPS --> Containers
+    GITOPS --> GPU
+```
+
+### Deployment Manifests
+
+| Manifest | Description |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| `docs/manifests/legacy-financial-app-vm.yaml` | Legacy app as a KubeVirt `VirtualMachine` |
+| `docs/manifests/financial-app-modern-deployment.yaml` | Modernized app as a container `Deployment` |
+| `docs/manifests/blackbox-modernization-argocd-app.yaml` | ArgoCD `Application` for GitOps sync |
+
+Switch the deployment target between VM and container mode by changing the
+`appMode` label (`vm` or `"container"`).
+
+---
+
 *This topology document was created as part of the Capetain Cetriva AI Hybrid Fund system architecture.*

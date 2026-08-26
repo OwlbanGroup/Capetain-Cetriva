@@ -17,6 +17,7 @@ from plaid.exceptions import ApiException
 
 logger = logging.getLogger(__name__)
 
+
 class PlaidIntegration:
     def __init__(self) -> None:
         configuration = Configuration(
@@ -27,7 +28,7 @@ class PlaidIntegration:
             }
         )
         self.client = plaid_api.PlaidApi(configuration)
-        
+
     def create_link_token(self, user_id: str) -> Optional[Dict[str, Any]]:
         """
         Create a link token for the client to initialize Plaid Link.
