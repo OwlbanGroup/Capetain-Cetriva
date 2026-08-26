@@ -1,0 +1,18 @@
+{
+    "gitlens.views.scm.grouped.views": {
+        "commits": true,
+        "worktrees": true,
+        "branches": true,
+        "remotes": true,
+        "stashes": true,
+        "tags": true,
+        "contributors": true,
+        "repositories": true,
+        "fileHistory": true,
+        "launchpad": true,
+        "searchAndCompare": true
+    },
+    "gitlens.views.formats.stashes.label": "${id}${message}${id}",
+    "gitlens.views.formats.stashes.description": "${stashOnRef, }${agoOrDate}${sha}${sha}",
+    "gitlens.views.formats.stashes.tooltip": "${link}${' on `'stashOnRef`}${'\\&nbsp;&nbsp;'changesDetail} \\ &nbsp;$(history) ${agoAndDate} ${message}${---footnotes}${author}${author}"
+}

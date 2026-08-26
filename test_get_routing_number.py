@@ -16,45 +16,31 @@ class TestGetRoutingNumber(unittest.TestCase):
         self.assertEqual(routing, '123456789')
         mock_save_cache.assert_not_called()
 
-    @patch('get_routing_number.requests.get')
     @patch('get_routing_number.load_cache')
     @patch('get_routing_number.save_cache')
-    def test_api_call_success(self, mock_save_cache, mock_load_cache, mock_requests_get):
+    def test_local_lookup_success(self, mock_save_cache, mock_load_cache):
+        # The module uses a local mock database instead of a live API call.
         mock_load_cache.return_value = {}
-        mock_response = unittest.mock.Mock()
-        mock_response.status_code = 200
-        mock_response.headers = {'Content-Type': 'application/json'}
-        mock_response.json.return_value = {'routingNumber': '987654321'}
-        mock_requests_get.return_value = mock_response
-
         routing = get_routing_number('New Bank')
         self.assertEqual(routing, '987654321')
         mock_save_cache.assert_called_once()
-    
-    @patch('get_routing_number.requests.get')
-    @patch('get_routing_number.load_cache')
-    def test_api_call_failure(self, mock_load_cache, mock_requests_get):
-        mock_load_cache.return_value = {}
-        mock_response = unittest.mock.Mock()
-        mock_response.status_code = 500
-        mock_requests_get.return_value = mock_response
 
+    @patch('get_routing_number.load_cache')
+    @patch('get_routing_number.save_cache')
+    def test_fail_bank_returns_none(self, mock_save_cache, mock_load_cache):
+        mock_load_cache.return_value = {}
         routing = get_routing_number('Fail Bank')
-        self.assertIn("not found in local database", routing)
-    
-    @patch('get_routing_number.requests.get')
-    @patch('get_routing_number.load_cache')
-    def test_api_json_parse_error(self, mock_load_cache, mock_requests_get):
-        mock_load_cache.return_value = {}
-        mock_response = unittest.mock.Mock()
-        mock_response.status_code = 200
-        mock_response.headers = {'Content-Type': 'application/json'}
-        mock_response.json.side_effect = ValueError("JSON decode error")
-        mock_requests_get.return_value = mock_response
+        self.assertIsNone(routing)
+        mock_save_cache.assert_not_called()
 
+    @patch('get_routing_number.load_cache')
+    @patch('get_routing_number.save_cache')
+    def test_bad_json_bank_returns_none(self, mock_save_cache, mock_load_cache):
+        mock_load_cache.return_value = {}
         routing = get_routing_number('Bad JSON Bank')
-        self.assertIn("not found in local database", routing)
-    
+        self.assertIsNone(routing)
+        mock_save_cache.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
