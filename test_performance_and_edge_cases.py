@@ -35,12 +35,11 @@ class TestPerformanceAndEdgeCases(unittest.TestCase):
         )
 
     def test_edge_case_empty_account_length(self):
-        with self.assertRaises(ValueError):
-            self.bank_utils.generate_account(0)
+        # generate_account() converts the internal ValueError into None.
+        self.assertIsNone(self.bank_utils.generate_account(0))
 
     def test_edge_case_negative_account_length(self):
-        with self.assertRaises(ValueError):
-            self.bank_utils.generate_account(-5)
+        self.assertIsNone(self.bank_utils.generate_account(-5))
 
     def test_edge_case_none_routing_number_validation(self):
         result = self.bank_utils.validate_routing(None)

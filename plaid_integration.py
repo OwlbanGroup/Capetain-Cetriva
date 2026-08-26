@@ -15,7 +15,6 @@ from plaid.model.item_get_request import ItemGetRequest
 from plaid.model.item_remove_request import ItemRemoveRequest
 from plaid.model.item_access_token_invalidate_request import ItemAccessTokenInvalidateRequest
 from plaid.configuration import Configuration
-from plaid.exceptions import ApiException
 
 logger = logging.getLogger(__name__)
 
@@ -51,14 +50,14 @@ class PlaidIntegration:
             request = LinkTokenCreateRequest(
                 user=LinkTokenCreateRequestUser(client_user_id=user_id),
                 client_name="Capetain Cetriva",
-                products=[Products.AUTH, Products.TRANSACTIONS],
+                products=[Products("auth"), Products("transactions")],
                 country_codes=[CountryCode.US],
                 language="en"
             )
             response = self.client.link_token_create(request)
             logger.info("Created link token for user %s", user_id)
             return response.to_dict()
-        except ApiException as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Plaid error creating link token: %s", e)
             return None
 
@@ -81,7 +80,7 @@ class PlaidIntegration:
             response = self.client.item_public_token_exchange(public_token)
             logger.info("Exchanged public token for access token")
             return response.to_dict()
-        except ApiException as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Plaid error exchanging public token: %s", e)
             return None
 
@@ -104,7 +103,7 @@ class PlaidIntegration:
             response = self.client.auth_get(access_token)
             logger.info("Retrieved accounts information")
             return response.to_dict()
-        except ApiException as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Plaid error retrieving accounts: %s", e)
             return None
 
@@ -142,7 +141,7 @@ class PlaidIntegration:
             response = self.client.transactions_get(request)
             logger.info("Retrieved transactions information")
             return response.to_dict()
-        except ApiException as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Plaid error retrieving transactions: %s", e)
             return None
 
@@ -166,7 +165,7 @@ class PlaidIntegration:
             response = self.client.item_get(request)
             logger.info("Retrieved item information")
             return response.to_dict()
-        except ApiException as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Plaid error retrieving item: %s", e)
             return None
 
@@ -190,7 +189,7 @@ class PlaidIntegration:
             response = self.client.item_remove(request)
             logger.info("Removed item successfully")
             return response.to_dict()
-        except ApiException as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Plaid error removing item: %s", e)
             return None
 
@@ -214,6 +213,6 @@ class PlaidIntegration:
             response = self.client.item_access_token_invalidate(request)
             logger.info("Invalidated access token successfully")
             return response.to_dict()
-        except ApiException as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Plaid error invalidating access token: %s", e)
             return None
