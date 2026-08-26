@@ -58,7 +58,7 @@ class PlaidIntegration:
             logger.info("Created link token for user %s", user_id)
             return response.to_dict()
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Plaid error creating link token: %s", e)
+            logger.exception("Plaid error creating link token: %s", e)
             return None
 
     def exchange_public_token(self, public_token: str) -> Optional[Dict[str, Any]]:
@@ -81,7 +81,7 @@ class PlaidIntegration:
             logger.info("Exchanged public token for access token")
             return response.to_dict()
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Plaid error exchanging public token: %s", e)
+            logger.exception("Plaid error exchanging public token: %s", e)
             return None
 
     def get_accounts(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -104,7 +104,7 @@ class PlaidIntegration:
             logger.info("Retrieved accounts information")
             return response.to_dict()
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Plaid error retrieving accounts: %s", e)
+            logger.exception("Plaid error retrieving accounts: %s", e)
             return None
 
     def get_transactions(
@@ -142,7 +142,7 @@ class PlaidIntegration:
             logger.info("Retrieved transactions information")
             return response.to_dict()
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Plaid error retrieving transactions: %s", e)
+            logger.exception("Plaid error retrieving transactions: %s", e)
             return None
 
     def get_item(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -166,7 +166,7 @@ class PlaidIntegration:
             logger.info("Retrieved item information")
             return response.to_dict()
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Plaid error retrieving item: %s", e)
+            logger.exception("Plaid error retrieving item: %s", e)
             return None
 
     def remove_item(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -190,7 +190,7 @@ class PlaidIntegration:
             logger.info("Removed item successfully")
             return response.to_dict()
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Plaid error removing item: %s", e)
+            logger.exception("Plaid error removing item: %s", e)
             return None
 
     def invalidate_access_token(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -214,5 +214,5 @@ class PlaidIntegration:
             logger.info("Invalidated access token successfully")
             return response.to_dict()
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Plaid error invalidating access token: %s", e)
+            logger.exception("Plaid error invalidating access token: %s", e)
             return None

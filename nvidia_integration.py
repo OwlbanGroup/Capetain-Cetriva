@@ -29,13 +29,19 @@ class NVIDIAIntegration:
 
     def _init_nvml(self):
         """Initialize NVIDIA Management Library for monitoring."""
+        if pynvml is None:
+            self.nvml_available = False
+            logger.warning(
+                "NVIDIA management library not installed; GPU monitoring limited."
+            )
+            return
         try:
             pynvml.nvmlInit()
             self.nvml_available = True
             logger.info("NVIDIA NVML initialized for GPU monitoring.")
         except Exception as e:  # pylint: disable=broad-exception-caught
             self.nvml_available = False
-            logger.warning("NVML initialization failed: %s. GPU monitoring limited.", e)
+            logger.exception("NVML initialization failed: %s", e)
 
     def _check_blackwell_compatibility(self) -> bool:
         """Check if CUDA version supports Blackwell (requires CUDA 12.4+)."""
@@ -60,27 +66,28 @@ class NVIDIAIntegration:
             "cuda_version": torch.version.cuda,
             "pytorch_version": torch.__version__,
         }
-        if self.nvml_available:
-            try:
-                device_count = pynvml.nvmlDeviceGetCount()
-                info["gpu_count"] = device_count
-                gpus = []
-                for i in range(device_count):
-                    handle = pynvml.nvmlDeviceGetHandleByIndex(i)
-                    name = pynvml.nvmlDeviceGetName(handle)
-                    memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
-                    utilization = pynvml.nvmlDeviceGetUtilizationRates(handle)
-                    gpus.append({
-                        "index": i,
-                        "name": name.decode('utf-8') if isinstance(name, bytes) else name,
-                        "memory_used": memory_info.used,
-                        "memory_total": memory_info.total,
-                        "utilization_gpu": utilization.gpu,
-                        "utilization_memory": utilization.memory,
-                    })
-                info["gpus"] = gpus
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                logger.error("Error retrieving GPU info: %s", e)
+        if not self.nvml_available or pynvml is None:
+            return info
+        try:
+            device_count = pynvml.nvmlDeviceGetCount()
+            info["gpu_count"] = device_count
+            gpus = []
+            for i in range(device_count):
+                handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+                name = pynvml.nvmlDeviceGetName(handle)
+                memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+                utilization = pynvml.nvmlDeviceGetUtilizationRates(handle)
+                gpus.append({
+                    "index": i,
+                    "name": name.decode('utf-8') if isinstance(name, bytes) else name,
+                    "memory_used": memory_info.used,
+                    "memory_total": memory_info.total,
+                    "utilization_gpu": utilization.gpu,
+                    "utilization_memory": utilization.memory,
+                })
+            info["gpus"] = gpus
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.exception("Error retrieving GPU info: %s", e)
         return info
 
     def allocate_gpu_resources(self, gpu_id: int = 0) -> Optional[torch.device]:
@@ -94,7 +101,7 @@ class NVIDIAIntegration:
             logger.info("Allocated GPU %s for project.", gpu_id)
             return device
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Failed to allocate GPU %s: %s", gpu_id, e)
+            logger.exception("Failed to allocate GPU %s: %s", gpu_id, e)
             return None
 
     def log_project_status(self, project_name: str = "Capetain-Cetriva"):
@@ -107,7 +114,7 @@ class NVIDIAIntegration:
 
     def shutdown(self):
         """Shutdown NVIDIA resources."""
-        if self.nvml_available:
+        if self.nvml_available and pynvml is not None:
             pynvml.nvmlShutdown()
             logger.info("NVIDIA NVML shutdown.")
 
