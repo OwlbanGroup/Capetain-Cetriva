@@ -1,0 +1,6 @@
+# Developer tooling (not runtime dependencies)
+# Runtime requirements live in requirements.txt
+flake8>=7.0
+autopep8>=2.3
+pylint>=3.0
+mypy>=1.8

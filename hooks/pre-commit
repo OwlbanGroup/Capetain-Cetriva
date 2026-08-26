@@ -1,0 +1,20 @@
+#!/bin/sh
+# Repo-managed pre-commit hook: lint all staged Python files with flake8.
+# Enabled automatically by running scripts/setup_hooks.sh (sets core.hooksPath).
+# Bypass in an emergency with: git commit --no-verify
+
+STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$')
+
+if [ -n "$STAGED_PY" ]; then
+    echo "Running flake8 on staged Python files..."
+    # shellcheck disable=SC2086
+    if ! python -m flake8 $STAGED_PY; then
+        echo "" >&2
+        echo "flake8 found issues - commit aborted." >&2
+        echo "Fix the issues above, or bypass with 'git commit --no-verify'." >&2
+        exit 1
+    fi
+    echo "flake8 passed."
+fi
+
+exit 0
