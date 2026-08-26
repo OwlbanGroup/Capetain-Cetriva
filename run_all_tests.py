@@ -1,8 +1,11 @@
-import unittest
+"""Discover and run the full test suite, exiting non-zero on failure."""
+
 import sys
+import unittest
 
 
 def run_all_tests():
+    """Discover test_*.py modules in this directory and run them verbosely."""
     loader = unittest.TestLoader()
     suite = loader.discover('.', pattern='test_*.py')
 

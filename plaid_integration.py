@@ -1,6 +1,8 @@
-import os
+"""Plaid banking API integration: link tokens, accounts, transactions, and items."""
+
 import logging
-from typing import Optional, Dict, Any
+import os
+from typing import Any, Dict, Optional
 
 from plaid.api import plaid_api
 from plaid.model.products import Products
@@ -19,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class PlaidIntegration:
+    """Wrapper around the Plaid API for account linking and data retrieval."""
     def __init__(self) -> None:
         configuration = Configuration(
             host="https://sandbox.plaid.com",
@@ -53,10 +56,10 @@ class PlaidIntegration:
                 language="en"
             )
             response = self.client.link_token_create(request)
-            logger.info(f"Created link token for user {user_id}")
+            logger.info("Created link token for user %s", user_id)
             return response.to_dict()
         except ApiException as e:
-            logger.error(f"Plaid error creating link token: {e}")
+            logger.error("Plaid error creating link token: %s", e)
             return None
 
     def exchange_public_token(self, public_token: str) -> Optional[Dict[str, Any]]:
@@ -79,7 +82,7 @@ class PlaidIntegration:
             logger.info("Exchanged public token for access token")
             return response.to_dict()
         except ApiException as e:
-            logger.error(f"Plaid error exchanging public token: {e}")
+            logger.error("Plaid error exchanging public token: %s", e)
             return None
 
     def get_accounts(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -102,7 +105,7 @@ class PlaidIntegration:
             logger.info("Retrieved accounts information")
             return response.to_dict()
         except ApiException as e:
-            logger.error(f"Plaid error retrieving accounts: {e}")
+            logger.error("Plaid error retrieving accounts: %s", e)
             return None
 
     def get_transactions(
@@ -140,7 +143,7 @@ class PlaidIntegration:
             logger.info("Retrieved transactions information")
             return response.to_dict()
         except ApiException as e:
-            logger.error(f"Plaid error retrieving transactions: {e}")
+            logger.error("Plaid error retrieving transactions: %s", e)
             return None
 
     def get_item(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -164,7 +167,7 @@ class PlaidIntegration:
             logger.info("Retrieved item information")
             return response.to_dict()
         except ApiException as e:
-            logger.error(f"Plaid error retrieving item: {e}")
+            logger.error("Plaid error retrieving item: %s", e)
             return None
 
     def remove_item(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -188,7 +191,7 @@ class PlaidIntegration:
             logger.info("Removed item successfully")
             return response.to_dict()
         except ApiException as e:
-            logger.error(f"Plaid error removing item: {e}")
+            logger.error("Plaid error removing item: %s", e)
             return None
 
     def invalidate_access_token(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -212,5 +215,5 @@ class PlaidIntegration:
             logger.info("Invalidated access token successfully")
             return response.to_dict()
         except ApiException as e:
-            logger.error(f"Plaid error invalidating access token: {e}")
+            logger.error("Plaid error invalidating access token: %s", e)
             return None

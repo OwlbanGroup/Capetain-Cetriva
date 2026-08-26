@@ -1,5 +1,7 @@
-import random
+"""Bank account number generation with Luhn checksum validation."""
+
 import logging
+import random
 from typing import List
 
 
@@ -66,7 +68,9 @@ def generate_account_number(length: int = 9, numeric_only: bool = True) -> str:
             check_digit = (10 - checksum) % 10
             account_number = number + str(check_digit)
             if is_valid_account_number(account_number):
-                logger.info(f"Generated valid account number: {account_number}")
+                logger.info(
+                    "Generated valid account number: %s", account_number
+                )
                 return account_number
     else:
         # Generate alphanumeric account number (simple random uppercase letters and digits)
@@ -75,13 +79,18 @@ def generate_account_number(length: int = 9, numeric_only: bool = True) -> str:
             number = ''.join(random.choice(chars) for _ in range(length - 1))
             # For alphanumeric, skip Luhn checksum validation
             account_number = number + random.choice(chars)
-            logger.info(f"Generated alphanumeric account number: {account_number}")
+            logger.info("Generated alphanumeric account number: %s", account_number)
             return account_number
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Generate and print a sample valid account number."""
     try:
-        account_number = generate_account_number()
-        print(f"Generated valid account number: {account_number}")
-    except Exception as e:
-        logger.error(f"Error generating account number: {e}")
+        sample = generate_account_number()
+        print(f"Generated valid account number: {sample}")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.error("Error generating account number: %s", e)
+
+
+if __name__ == "__main__":
+    main()

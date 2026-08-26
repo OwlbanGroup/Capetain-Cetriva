@@ -1,3 +1,5 @@
+"""US bank routing number validation using the ABA checksum algorithm."""
+
 import logging
 from typing import Union
 
@@ -39,13 +41,19 @@ def validate_routing_number(routing_number: Union[str, None]) -> bool:
         1 * (digits[2] + digits[5] + digits[8])
     )
     is_valid = checksum % 10 == 0
-    logger.info(
-        f"Routing number {routing_number} validation result: {is_valid}"
-    )
+    logger.info("Routing number %s validation result: %s", routing_number, is_valid)
     return is_valid
 
 
+def main() -> None:
+    """Validate and report on a sample routing number."""
+    sample_routing_number = "987654321"
+    result = validate_routing_number(sample_routing_number)
+    print(
+        f"Routing number {sample_routing_number} is "
+        f"{'valid' if result else 'invalid'}."
+    )
+
+
 if __name__ == "__main__":
-    routing_number = "987654321"
-    is_valid = validate_routing_number(routing_number)
-    print(f"Routing number {routing_number} is {'valid' if is_valid else 'invalid'}.")
+    main()

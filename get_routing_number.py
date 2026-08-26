@@ -86,6 +86,6 @@ def get_routing_number(bank_name: str) -> Optional[str]:
 
 
 if __name__ == "__main__":
-    sample_bank_name = "Capetain Cetriva"
-    result = get_routing_number(sample_bank_name)
-    print(f"Routing number search result for '{sample_bank_name}': {result}")
+    SAMPLE_BANK_NAME = "Capetain Cetriva"
+    result = get_routing_number(SAMPLE_BANK_NAME)
+    print(f"Routing number search result for '{SAMPLE_BANK_NAME}': {result}")

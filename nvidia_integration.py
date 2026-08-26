@@ -1,6 +1,9 @@
-import torch
+"""NVIDIA Blackwell GPU integration: monitoring, resource allocation, and project status."""
+
 import logging
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
+import torch
 try:
     import pynvml
 except ImportError:
@@ -30,9 +33,9 @@ class NVIDIAIntegration:
             pynvml.nvmlInit()
             self.nvml_available = True
             logger.info("NVIDIA NVML initialized for GPU monitoring.")
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             self.nvml_available = False
-            logger.warning(f"NVML initialization failed: {e}. GPU monitoring limited.")
+            logger.warning("NVML initialization failed: %s. GPU monitoring limited.", e)
 
     def _check_blackwell_compatibility(self) -> bool:
         """Check if CUDA version supports Blackwell (requires CUDA 12.4+)."""
@@ -42,7 +45,9 @@ class NVIDIAIntegration:
         if cuda_version:
             major, minor = map(int, cuda_version.split('.')[:2])
             compatible = (major > 12) or (major == 12 and minor >= 4)
-            logger.info(f"CUDA version {cuda_version} - Blackwell compatible: {compatible}")
+            logger.info(
+                "CUDA version %s - Blackwell compatible: %s", cuda_version, compatible
+            )
             return compatible
         return False
 
@@ -74,8 +79,8 @@ class NVIDIAIntegration:
                         "utilization_memory": utilization.memory,
                     })
                 info["gpus"] = gpus
-            except Exception as e:
-                logger.error(f"Error retrieving GPU info: {e}")
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                logger.error("Error retrieving GPU info: %s", e)
         return info
 
     def allocate_gpu_resources(self, gpu_id: int = 0) -> Optional[torch.device]:
@@ -86,16 +91,16 @@ class NVIDIAIntegration:
         try:
             device = torch.device(f"cuda:{gpu_id}")
             torch.cuda.set_device(device)
-            logger.info(f"Allocated GPU {gpu_id} for project.")
+            logger.info("Allocated GPU %s for project.", gpu_id)
             return device
-        except Exception as e:
-            logger.error(f"Failed to allocate GPU {gpu_id}: {e}")
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.error("Failed to allocate GPU %s: %s", gpu_id, e)
             return None
 
     def log_project_status(self, project_name: str = "Capetain-Cetriva"):
         """Log project status on NVIDIA resources for visibility."""
         info = self.get_gpu_info()
-        logger.info(f"Project '{project_name}' NVIDIA Status: {info}")
+        logger.info("Project '%s' NVIDIA Status: %s", project_name, info)
         # Placeholder for Fleet Command API integration
         # e.g., api_call to NVIDIA Fleet Command for remote monitoring
         print(f"NVIDIA Project Control Log: {info}")  # For user visibility

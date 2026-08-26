@@ -97,20 +97,20 @@ class E2ENVIDIAIntegration:
         logger.info("Reinforcement learning training completed.")
 
         # Get latest prediction
-        if self.market_analysis.data is not None and not self.market_analysis.data.empty:
-            latest_target = self.market_analysis.data["Target"].iloc[-1]
-            prediction = "Positive" if latest_target == 1 else "Negative"
-            logger.info("Latest AI prediction for %s: %s", ticker, prediction)
-            return {
-                "ticker": ticker,
-                "data_points": len(data),
-                "training_time": training_time,
-                "prediction": prediction,
-                "model_trained": model is not None
-            }
-        else:
+        if self.market_analysis.data is None or self.market_analysis.data.empty:
             logger.warning("No data available for prediction.")
             return {"error": "No data available"}
+
+        latest_target = self.market_analysis.data["Target"].iloc[-1]
+        prediction = "Positive" if latest_target == 1 else "Negative"
+        logger.info("Latest AI prediction for %s: %s", ticker, prediction)
+        return {
+            "ticker": ticker,
+            "data_points": len(data),
+            "training_time": training_time,
+            "prediction": prediction,
+            "model_trained": model is not None
+        }
 
     def execute_banking_operations(self, total_profits: float = 10000.0) -> Dict[str, Any]:
         """
