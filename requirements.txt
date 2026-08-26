@@ -1,9 +1,14 @@
-torch
+# Runtime dependencies.
+# Floors reflect versions verified by the local test suite and CI.
+torch>=2.0
 nvidia-ml-py
-pandas
-numpy
-scikit-learn
-yfinance
-requests
-plaid-python
+numpy>=1.26
+pandas>=2.0
+scikit-learn>=1.3
+yfinance>=0.2
+requests>=2.31
+# plaid-python >= 13 uses the model-constructor style this code targets,
+# e.g. Products("auth") / CountryCode("US").
+plaid-python>=13.0
+
 

@@ -39,6 +39,16 @@ jobs:
           validate_routing_number.py e2e_nvidia_blackwell_integration.py
           run_all_tests.py
 
+      - name: mypy (source modules)
+        run: >
+          python -m mypy
+          account_routing_demo.py banking_utils.py ach_payments.py
+          plaid_integration.py nvidia_integration.py
+          generate_account_number.py get_routing_number.py
+          validate_routing_number.py e2e_nvidia_blackwell_integration.py
+          run_all_tests.py
+          --follow-imports=skip
+
   test:
     name: Tests (pytest)
     runs-on: ubuntu-latest
