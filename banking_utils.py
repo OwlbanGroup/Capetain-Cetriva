@@ -230,7 +230,8 @@ class BankingUtils:
         Args:
             amount (float): Amount to spend.
             description (str): Optional payment description.
-            account_number (Optional[str]): Oscar's bank account number. If None, generate a valid account number.
+            account_number (Optional[str]): Oscar's bank account number.
+                If None, generate a valid account number.
 
         Returns:
             Optional[Dict[str, Any]]: Payment response or None if creation fails.
@@ -291,14 +292,16 @@ class BankingUtils:
                         "AI prediction: Negative trend for NVDA, reducing equities allocation."
                     )
 
-            payment_description = "%s - Allocation to %s" % (description, asset_class)
+            payment_description = f"{description} - Allocation to {asset_class}"
             # For demonstration, generate a new account number for each allocation
             account_number = cls.generate_account()
             if account_number is None:
                 logger.error("Failed to generate account number for %s allocation.", asset_class)
                 responses[asset_class] = None
                 continue
-            response = cls.create_ach_payment(account_number, "021000021", amount, payment_description)
+            response = cls.create_ach_payment(
+                account_number, "021000021", amount, payment_description
+            )
             responses[asset_class] = response
             logger.info("Allocated %s to %s with response: %s", amount, asset_class, response)
 
@@ -309,37 +312,37 @@ if __name__ == "__main__":
     # Example usage
     bank_utils = BankingUtils()
     account = bank_utils.generate_account(10)
-    print("Generated Account Number: %s" % account)
+    print(f"Generated Account Number: {account}")
 
     EXAMPLE_BANK_NAME = "Capetain Cetriva"
     routing = bank_utils.get_routing(EXAMPLE_BANK_NAME)
-    print("Routing Number for %s: %s" % (EXAMPLE_BANK_NAME, routing))
+    print(f"Routing Number for {EXAMPLE_BANK_NAME}: {routing}")
 
     routing_valid = bank_utils.validate_routing(routing if routing else "")
-    print("Is Routing Number Valid? %s" % routing_valid)
+    print(f"Is Routing Number Valid? {routing_valid}")
 
     # ACH payment example
     if account and routing:
         ach_response = bank_utils.create_ach_payment(
             account, routing, 100.0, "Test ACH payment"
         )
-        print("ACH Payment Response: %s" % ach_response)
+        print(f"ACH Payment Response: {ach_response}")
     else:
         print("Cannot create ACH payment: missing account or routing number")
 
     # Plaid example (requires valid tokens)
     EXAMPLE_USER_ID = "user123"
     link_token_response = bank_utils.create_plaid_link_token(EXAMPLE_USER_ID)
-    print("Plaid Link Token Response: %s" % link_token_response)
+    print(f"Plaid Link Token Response: {link_token_response}")
 
     # Oscar Broome spend profits example
     oscar_payment_response = bank_utils.spend_profits_for_oscar(
         5000.0, "Spending profits for Oscar Broome"
     )
-    print("Oscar Broome Spend Profits Payment Response: %s" % oscar_payment_response)
+    print(f"Oscar Broome Spend Profits Payment Response: {oscar_payment_response}")
 
     # Allocate and spend profits example
     allocation_responses = bank_utils.allocate_and_spend_profits(
         10000.0, "Profit allocation for Oscar Broome"
     )
-    print("Profit Allocation Responses: %s" % allocation_responses)
+    print(f"Profit Allocation Responses: {allocation_responses}")
