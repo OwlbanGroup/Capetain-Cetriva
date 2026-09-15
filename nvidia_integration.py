@@ -1,5 +1,6 @@
 """NVIDIA Blackwell GPU integration: monitoring, resource allocation, and project status."""
 
+import os
 import logging
 from typing import Any, Dict, Optional
 
@@ -31,17 +32,28 @@ class NVIDIAIntegration:
         """Initialize NVIDIA Management Library for monitoring."""
         if pynvml is None:
             self.nvml_available = False
-            logger.warning(
+            logger.debug(
                 "NVIDIA management library not installed; GPU monitoring limited."
             )
             return
+        
+        # Skip NVML initialization in test environments
+        if os.getenv('TESTING') == '1' or os.getenv('UNIT_TEST') == '1':
+            self.nvml_available = False
+            logger.debug("Skipping NVML initialization in test environment.")
+            return
+        
         try:
             pynvml.nvmlInit()
             self.nvml_available = True
             logger.info("NVIDIA NVML initialized for GPU monitoring.")
+        except pynvml.NVMLError_LibraryNotFound:
+            # NVML library not found - common in non-GPU environments
+            self.nvml_available = False
+            logger.debug("NVML shared library not found; GPU monitoring disabled.")
         except Exception as e:  # pylint: disable=broad-exception-caught
             self.nvml_available = False
-            logger.exception("NVML initialization failed: %s", e)
+            logger.warning("NVML initialization failed: %s", e)
 
     def _check_blackwell_compatibility(self) -> bool:
         """Check if CUDA version supports Blackwell (requires CUDA 12.4+)."""
