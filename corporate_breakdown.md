@@ -273,6 +273,8 @@
 | 2024 | $150M      | -             | Seed Capital Phase |
 | 2025 | $350M      | 133%          | Institutional Onboarding |
 | 2026 | $500M      | 43%           | Mature Portfolio |
+| 2027 | $800M      | 60%           | International Expansion |
+| 2028 | $1.2B      | 50%           | Global Market Leadership |
 
 ### Fee Structure Impact
 
