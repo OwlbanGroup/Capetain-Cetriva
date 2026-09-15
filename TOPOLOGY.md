@@ -122,21 +122,21 @@ GPU acceleration, banking operations, and financial allocation systems.
 
 ### AUM Structure (Current)
 
-| Division                | Amount ($) | Percentage | Description                                    |
-| ----------------------- | ----------- | ---------- | ---------------------------------------------- |
-| Investment Fund         | 75M         | 50%        | Private equity, public markets, digital assets |
-| Banking Operations      | 30M         | 20%        | Loans, deposits, credit facilities             |
-| Wealth Management       | 30M         | 20%        | High-net-worth portfolios, trusts              |
-| Legal Protection (ESA)  | 15M         | 10%        | Litigation funding, asset protection           |
-| **Total AUM**           | **$150M**   | **100%**   | Aggregate of all divisions                     |
+| Division               | Amount ($) | Percentage | Description                                    |
+| ---------------------- | ---------- | ---------- | ---------------------------------------------- |
+| Investment Fund        | 75M        | 50%        | Private equity, public markets, digital assets |
+| Banking Operations     | 30M        | 20%        | Loans, deposits, credit facilities             |
+| Wealth Management      | 30M        | 20%        | High-net-worth portfolios, trusts              |
+| Legal Protection (ESA) | 15M        | 10%        | Litigation funding, asset protection           |
+| **Total AUM**          | **$150M**  | **100%**   | Aggregate of all divisions                     |
 
 ### Investment Allocation
 
-| Asset Class        | Allocation | Strategy                                 |
-| ------------------ | ---------- | ---------------------------------------- |
-| Alternative Assets | 60%        | Private Equity, Real Estate, Commodities  |
-| Public Equities    | 30%        | AI-enhanced stock selection               |
-| Digital Assets     | 10%        | Blockchain-based investments              |
+| Asset Class        | Allocation | Strategy                             |
+| ------------------ | ---------- | ------------------------------------ |
+| Alternative Assets | 60%        | Private Equity, Real Estate, Commod  |
+| Public Equities    | 30%        | AI-enhanced stock selection           |
+| Digital Assets     | 10%        | Blockchain-based investments          |
 
 ### Sector Allocation (Investment Thesis)
 
@@ -264,8 +264,8 @@ GPU acceleration, banking operations, and financial allocation systems.
 
 ### Unified Banking Interface
 
-| File               | Class          | Methods                                                                 |
-| ------------------ | -------------- | ---------------------------------------------------------------------- |
+| File               | Class          | Methods                                                                        |
+| ------------------ | -------------- | ------------------------------------------------------------------------------ |
 | `banking_utils.py`  | `BankingUtils` | `generate_account()`, `get_routing()`, `validate_routing()`, `create_ach_payment()`, `spend_profits_for_oscar()`, `allocate_and_spend_profits()` |
 
 ---
