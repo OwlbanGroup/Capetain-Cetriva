@@ -1,18 +1,30 @@
 {
-    "gitlens.views.scm.grouped.views": {
-        "commits": true,
-        "worktrees": true,
-        "branches": true,
-        "remotes": true,
-        "stashes": true,
-        "tags": true,
-        "contributors": true,
-        "repositories": true,
-        "fileHistory": true,
-        "launchpad": true,
-        "searchAndCompare": true
-    },
-    "gitlens.views.formats.stashes.label": "${id}${message}${id}",
-    "gitlens.views.formats.stashes.description": "${stashOnRef, }${agoOrDate}${sha}${sha}",
-    "gitlens.views.formats.stashes.tooltip": "${link}${' on `'stashOnRef`}${'\\&nbsp;&nbsp;'changesDetail} \\ &nbsp;$(history) ${agoAndDate} ${message}${---footnotes}${author}${author}"
+  "gitlens.views.scm.grouped.views": {
+    "commits": true,
+    "worktrees": true,
+    "branches": true,
+    "remotes": true,
+    "stashes": true,
+    "tags": true,
+    "contributors": true,
+    "repositories": true,
+    "fileHistory": true,
+    "launchpad": true,
+    "searchAndCompare": true
+  },
+  "gitlens.views.formats.stashes.label": "${id}${message}${id}",
+  "gitlens.views.formats.stashes.description": "${stashOnRef, }${agoOrDate}${sha}${sha}",
+  "gitlens.views.formats.stashes.tooltip": "${link}${' on `'stashOnRef`}${'\\&nbsp;&nbsp;'changesDetail} \\ &nbsp;$(history) ${agoAndDate} ${message}${---footnotes}${author}${author}",
+  "mcpServers": {
+    "auxly": {
+      "command": "node",
+      "args": [
+        "c:\\Users\\bsean\\.vscode\\extensions\\tzamun-arabia.auxly-extension-0.1.8\\dist\\mcp-server\\index.js"
+      ],
+      "env": {
+        "AUXLY_WORKSPACE_PATH": "c:\\Users\\bsean\\OneDrive\\BLACKBOX-AI\\.github\\.github\\.github\\OSCAR-BROOME-REVENUE\\.blackbox\\Coetus-App-1-OwlbanGroup\\Coetus-App-1-OwlbanGroup\\Coetus-App-1-OwlbanGroup\\Capetain-Cetriva",
+        "AUXLY_API_URL": "https://auxly.tzamun.com"
+      }
+    }
+  }
 }
