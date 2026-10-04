@@ -16,11 +16,22 @@ from oscar_compensation import (
 )
 
 
+def make_comp(aum=DEFAULT_AUM, ownership_pct=OSCAR_OWNERSHIP_PERCENTAGE):
+    """Create an OscarCompensation without triggering BankingUtils import."""
+    comp = OscarCompensation.__new__(OscarCompensation)
+    comp.banking_utils = MagicMock()
+    comp.aum = aum
+    comp.ownership_pct = ownership_pct
+    comp.routing_number = DEFAULT_ROUTING_NUMBER
+    comp.history = []
+    return comp
+
+
 class TestManagementFeeCalculation(unittest.TestCase):
     """Tests for the management fee calculation (2% of AUM)."""
 
     def setUp(self):
-        self.comp = OscarCompensation()
+        self.comp = make_comp()
 
     def test_management_fee_basic(self):
         """2% of AUM should be returned."""
@@ -46,7 +57,7 @@ class TestPerformanceFeeCalculation(unittest.TestCase):
     """Tests for the performance fee calculation (20% above 8% hurdle)."""
 
     def setUp(self):
-        self.comp = OscarCompensation()
+        self.comp = make_comp()
         self.aum = 100_000_000
 
     def test_performance_fee_below_hurdle(self):
@@ -83,7 +94,7 @@ class TestCompensationCalculation(unittest.TestCase):
     """Tests for total compensation calculation combining both fees."""
 
     def setUp(self):
-        self.comp = OscarCompensation(aum=100_000_000)
+        self.comp = make_comp(aum=100_000_000)
 
     def test_total_compensation_with_performance(self):
         """Compensation includes both management and performance fees."""
@@ -114,7 +125,7 @@ class TestCompensationCalculation(unittest.TestCase):
 
     def test_ownership_percentage_applied(self):
         """Compensation should reflect ownership percentage."""
-        comp = OscarCompensation(aum=100_000_000, ownership_pct=0.5)
+        comp = make_comp(aum=100_000_000, ownership_pct=0.5)
         breakdown = comp.calculate_compensation(100_000_000, 15_000_000, "annual")
         self.assertAlmostEqual(breakdown.gross_management_fee, 2_000_000.0)
         self.assertAlmostEqual(breakdown.gross_performance_fee, 1_400_000.0)
@@ -131,44 +142,51 @@ class TestCompensationCalculation(unittest.TestCase):
 class TestProcessCompensation(unittest.TestCase):
     """Tests for the process_compensation payment method."""
 
-    @patch.object(OscarCompensation, '_get_or_generate_account')
-    def test_process_compensation_with_mock(self, mock_acct):
+    @patch.object(OscarCompensation, 'calculate_compensation')
+    def test_process_compensation_with_mock(self, mock_calc):
         """process_compensation should calculate and trigger ACH payment."""
-        mock_acct.return_value = "123456789"
-        comp = OscarCompensation.__new__(OscarCompensation)
-        comp.banking_utils = MagicMock()
-        comp.banking_utils.create_ach_payment = MagicMock(
+        mock_calc.return_value = CompensationBreakdown(
+            period="annual",
+            aum=100_000_000,
+            gross_management_fee=2_000_000,
+            gross_performance_fee=1_400_000,
+            returns=15_000_000,
+            oscar_ownership_pct=1.0,
+            net_management_fee=2_000_000,
+            net_performance_fee=1_400_000,
+            total_compensation=3_400_000,
+        )
+        comp = make_comp()
+        comp.banking_utils.spend_profits_for_oscar = MagicMock(
             return_value={"status": "success"}
         )
-        comp.banking_utils.generate_account = MagicMock(return_value="987654321")
-        comp.routing_number = DEFAULT_ROUTING_NUMBER
-        comp.ownership_pct = OSCAR_OWNERSHIP_PERCENTAGE
-        comp.history = []
-
-        response = comp.process_compensation(
-            100_000_000, 15_000_000, "Annual Bonus"
-        )
+        response = comp.process_compensation(100_000_000, 15_000_000, "Annual Bonus")
         self.assertEqual(response["status"], "success")
-        comp.banking_utils.create_ach_payment.assert_called_once()
+        comp.banking_utils.spend_profits_for_oscar.assert_called_once()
 
-    @patch.object(OscarCompensation, '_get_or_generate_account')
-    def test_process_compensation_no_description(self, mock_acct):
+    @patch.object(OscarCompensation, 'calculate_compensation')
+    def test_process_compensation_no_description(self, mock_calc):
         """process_compensation should generate description without input."""
-        mock_acct.return_value = "123456789"
-        comp = OscarCompensation.__new__(OscarCompensation)
-        comp.banking_utils = MagicMock()
-        comp.banking_utils.create_ach_payment = MagicMock(
+        mock_calc.return_value = CompensationBreakdown(
+            period="annual",
+            aum=100_000_000,
+            gross_management_fee=2_000_000,
+            gross_performance_fee=0,
+            returns=8_000_000,
+            oscar_ownership_pct=1.0,
+            net_management_fee=2_000_000,
+            net_performance_fee=0,
+            total_compensation=2_000_000,
+        )
+        comp = make_comp()
+        comp.banking_utils.spend_profits_for_oscar = MagicMock(
             return_value={"status": "success"}
         )
-        comp.banking_utils.generate_account = MagicMock(return_value="987654321")
-        comp.routing_number = DEFAULT_ROUTING_NUMBER
-        comp.ownership_pct = OSCAR_OWNERSHIP_PERCENTAGE
-        comp.history = []
-
         response = comp.process_compensation(100_000_000, 12_000_000)
         self.assertEqual(response["status"], "success")
-        call_args = comp.banking_utils.create_ach_payment.call_args
-        self.assertIn("Oscar Broome Compensation", call_args.kwargs.get("description", ""))
+        call_args = comp.banking_utils.spend_profits_for_oscar.call_args
+        self.assertIn("Oscar Broome Compensation",
+                      call_args.kwargs.get("description", ""))
 
     @patch.object(OscarCompensation, 'calculate_compensation')
     def test_process_compensation_payment_failure(self, mock_calc):
@@ -184,19 +202,40 @@ class TestProcessCompensation(unittest.TestCase):
             net_performance_fee=0,
             total_compensation=2_000_000,
         )
-
-        comp = OscarCompensation.__new__(OscarCompensation)
-        comp.banking_utils = MagicMock()
-        comp.banking_utils.create_ach_payment = MagicMock(return_value=None)
-        comp.banking_utils.generate_account = MagicMock(return_value="987654321")
-        comp.routing_number = DEFAULT_ROUTING_NUMBER
-        comp.ownership_pct = OSCAR_OWNERSHIP_PERCENTAGE
-        comp.history = []
-
+        comp = make_comp()
+        comp.banking_utils.spend_profits_for_oscar = MagicMock(return_value=None)
         response = comp.process_compensation(
             100_000_000, 5_000_000, account_number="987654321"
         )
         self.assertIsNone(response)
+
+    @patch.object(OscarCompensation, 'calculate_compensation')
+    def test_process_compensation_spend_profits_integration(self, mock_calc):
+        """process_compensation should pass correct amount to spend_profits_for_oscar."""
+        mock_calc.return_value = CompensationBreakdown(
+            period="Q1 2024",
+            aum=150_000_000,
+            gross_management_fee=3_000_000,
+            gross_performance_fee=500_000,
+            returns=15_000_000,
+            oscar_ownership_pct=1.0,
+            net_management_fee=3_000_000,
+            net_performance_fee=500_000,
+            total_compensation=3_500_000,
+        )
+        comp = make_comp()
+        comp.banking_utils.spend_profits_for_oscar = MagicMock(
+            return_value={"transaction_id": "txn_456"}
+        )
+        response = comp.process_compensation(
+            150_000_000, 15_000_000, "Q1 Payout", account_number="111222333"
+        )
+        self.assertEqual(response["transaction_id"], "txn_456")
+        call_args = comp.banking_utils.spend_profits_for_oscar.call_args
+        self.assertEqual(call_args.args[0], 3_500_000)
+        self.assertEqual(call_args.kwargs.get("description", ""),
+                         "Q1 Payout - Oscar Broome Compensation (Q1 2024)")
+        self.assertEqual(call_args.kwargs.get("account_number", ""), "111222333")
 
 
 class TestGetOrGenerateAccount(unittest.TestCase):
@@ -204,30 +243,23 @@ class TestGetOrGenerateAccount(unittest.TestCase):
 
     def test_provided_account(self):
         """Should return the provided account number."""
-        comp = OscarCompensation.__new__(OscarCompensation)
-        comp.banking_utils = MagicMock()
-        comp.banking_utils.generate_account = MagicMock(return_value="111111111")
+        comp = make_comp()
         result = comp._get_or_generate_account("999999999")
         self.assertEqual(result, "999999999")
 
     def test_generated_account(self):
         """Should generate an account when none provided."""
-        with patch.object(BankingUtilsMock, 'generate_account', return_value="123456789"):
-            comp = OscarCompensation()
-            result = comp._get_or_generate_account(None)
-            self.assertEqual(result, "123456789")
+        comp = make_comp()
+        comp.banking_utils.generate_account.return_value = "123456789"
+        result = comp._get_or_generate_account(None)
+        self.assertEqual(result, "123456789")
 
     def test_account_generation_failure(self):
         """Should raise ValueError when account generation fails."""
-        with patch.object(BankingUtilsMock, 'generate_account', return_value=None):
-            comp = OscarCompensation()
-            with self.assertRaises(ValueError):
-                comp._get_or_generate_account(None)
-
-
-class BankingUtilsMock:
-    """Simple mock for BankingUtils."""
-    pass
+        comp = make_comp()
+        comp.banking_utils.generate_account.return_value = None
+        with self.assertRaises(ValueError):
+            comp._get_or_generate_account(None)
 
 
 class TestSummary(unittest.TestCase):
@@ -235,12 +267,12 @@ class TestSummary(unittest.TestCase):
 
     def test_empty_history(self):
         """Summary should handle empty history gracefully."""
-        comp = OscarCompensation()
+        comp = make_comp()
         self.assertEqual(comp.summary(), "No compensation records found.")
 
     def test_summary_with_records(self):
         """Summary should display compensation records."""
-        comp = OscarCompensation(aum=100_000_000)
+        comp = make_comp(aum=100_000_000)
         comp.calculate_compensation(100_000_000, 15_000_000, "Q1 2024")
         comp.calculate_compensation(100_000_000, 20_000_000, "Q2 2024")
         result = comp.summary()
@@ -250,7 +282,7 @@ class TestSummary(unittest.TestCase):
 
     def test_summary_with_filter(self):
         """Summary should filter by period when provided."""
-        comp = OscarCompensation(aum=100_000_000)
+        comp = make_comp(aum=100_000_000)
         comp.calculate_compensation(100_000_000, 15_000_000, "Q1 2024")
         comp.calculate_compensation(100_000_000, 20_000_000, "Q2 2024")
         result = comp.summary("Q1 2024")
@@ -261,13 +293,18 @@ class TestSummary(unittest.TestCase):
 class TestCreateDefault(unittest.TestCase):
     """Tests for the create_default factory method."""
 
-    @patch.dict('os.environ', {'DEFAULT_AUM': '200000000'})
+    @patch.dict('sys.modules', {'banking_utils': MagicMock()})
     def test_create_default_with_env(self):
         """create_default should read AUM from environment."""
-        comp = OscarCompensation.create_default()
-        self.assertEqual(comp.aum, 200_000_000)
+        import os
+        os.environ['DEFAULT_AUM'] = '200000000'
+        try:
+            comp = OscarCompensation.create_default()
+            self.assertEqual(comp.aum, 200_000_000)
+        finally:
+            os.environ.pop('DEFAULT_AUM', None)
 
-    @patch.dict('os.environ', {}, clear=False)
+    @patch.dict('sys.modules', {'banking_utils': MagicMock()})
     def test_create_default_defaults(self):
         """create_default should use module defaults when env not set."""
         import os

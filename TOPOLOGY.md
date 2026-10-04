@@ -261,12 +261,31 @@ GPU acceleration, banking operations, and financial allocation systems.
 | `nvidia_integration.py` | `NVIDIAIntegration` | GPU monitoring, Blackwell compatibility |
 | `ai_models/market_trend_analysis.py` | `MarketTrendAnalysis` | Market prediction with PyTorch |
 | `e2e_nvidia_blackwell_integration.py` | `E2ENVIDIAIntegration` | Full E2E pipeline orchestration |
+| `oscar_compensation.py` | `OscarCompensation` | Management fee (2% AUM) + performance fee (20% above 8% hurdle) |
 
 ### Unified Banking Interface
 
 | File | Class | Methods |
 | --- | --- | --- |
 | `banking_utils.py` | `BankingUtils` | `generate_account()`, `get_routing()`, `validate_routing()`, `create_ach_payment()`, `spend_profits_for_oscar()`, `allocate_and_spend_profits()` |
+
+### Oscar Broome Compensation System
+
+The `oscar_compensation.py` module calculates and processes compensation for
+Oscar Broome, founder of Owlban Group and Capetain Cetriva, based on the fund's
+fee structure:
+
+- **Management Fee**: 2% of Assets Under Management (AUM)
+- **Performance Fee (Incentive)**: 20% of returns above an 8% annual hurdle rate
+- **Ownership**: 100% of fees allocated to Oscar (owns both entities)
+
+The module integrates with `BankingUtils` to issue ACH payments to Oscar's
+account at Capetain Private AI Bank (routing `021000021`).
+
+| File | Class | Methods |
+| --- | --- | --- |
+| `oscar_compensation.py` | `OscarCompensation` | `calculate_management_fee()`, `calculate_performance_fee()`, `calculate_compensation()`, `process_compensation()`, `get_compensation_history()`, `summary()`, `create_default()` |
+| `oscar_compensation.py` | `CompensationBreakdown` | Dataclass with `gross_management_fee`, `gross_performance_fee`, `net_management_fee`, `net_performance_fee`, `total_compensation`, `timestamp` |
 
 ---
 

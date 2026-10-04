@@ -25,9 +25,7 @@ Bypass in an emergency with `git commit --no-verify`.
 
 ```bash
 python -m flake8                          # lint (0 issues expected)
-python -m pylint <file>                   # deep static analysis
-python -m mypy <file> --ignore-missing-imports --follow-imports=skip
-python -m pytest test_banking_utils.py    # run tests
+python -m pytest test_banking_utils.py test_oscar_compensation.py    # run tests
 ```
 
 ## Key entry points
@@ -36,6 +34,7 @@ python -m pytest test_banking_utils.py    # run tests
 | --- | --- |
 | `account_routing_demo.py` | Account/routing number demo |
 | `banking_utils.py` | Unified `BankingUtils` interface |
+| `oscar_compensation.py` | Oscar Broome compensation calculation and ACH disbursement |
 | `e2e_nvidia_blackwell_integration.py` | Full E2E pipeline orchestration |
 | `docs/manifests/` | OpenShift/KubeVirt deployment manifests |
 | `TOPOLOGY.md` | System architecture and topology |

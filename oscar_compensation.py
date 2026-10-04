@@ -3,7 +3,7 @@
 This module calculates and processes compensation for Oscar Broome,
 the founder and owner of Owlban Group and Capetain Cetriva.
 
-Compensation is based on the fund's fee structure:
+Compensation is based on the fund fee structure:
   - Management Fee: 2% of Assets Under Management (AUM)
   - Performance Fee (Incentive Fee): 20% of returns above an 8% hurdle rate
   - Oscar's ownership percentage determines his share of total fees
@@ -16,11 +16,11 @@ import logging
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, TYPE_CHECKING
 
-from banking_utils import BankingUtils
+if TYPE_CHECKING:
+    from banking_utils import BankingUtils
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -54,7 +54,7 @@ class CompensationBreakdown:
 class OscarCompensation:
     """Calculate and process Oscar Broome's compensation.
 
-    Compensation = Oscar's ownership % x (management fee + performance fee)
+    Compensation = Oscar ownership % x (management fee + performance fee)
     where:
       - management fee  = 2% x AUM
       - performance fee = 20% x max(0, returns - 8% x AUM)
@@ -62,7 +62,7 @@ class OscarCompensation:
 
     def __init__(
         self,
-        banking_utils: Optional[BankingUtils] = None,
+        banking_utils: Optional["BankingUtils"] = None,
         aum: float = DEFAULT_AUM,
         ownership_pct: float = OSCAR_OWNERSHIP_PERCENTAGE,
         routing_number: str = DEFAULT_ROUTING_NUMBER,
@@ -71,12 +71,16 @@ class OscarCompensation:
 
         Args:
             banking_utils: Optional BankingUtils instance for ACH payments.
-                If None, a new instance is created.
+                If None, a new instance is created (lazy import to avoid
+                importing heavy dependencies like torch at import time).
             aum: Assets under management for fee calculation.
             ownership_pct: Oscar's ownership percentage of the fee pool.
             routing_number: Routing number for ACH payments.
         """
-        self.banking_utils: BankingUtils = banking_utils or BankingUtils()
+        if banking_utils is None:
+            from banking_utils import BankingUtils
+            banking_utils = BankingUtils()
+        self.banking_utils: "BankingUtils" = banking_utils
         self.aum = aum
         self.ownership_pct = ownership_pct
         self.routing_number = routing_number
@@ -170,7 +174,7 @@ class OscarCompensation:
         )
         return breakdown
 
-    # -- Payment processing --
+        # -- Payment processing --
 
     def _get_or_generate_account(self, provided: Optional[str]) -> str:
         """Return a provided account number or generate a new valid one."""
@@ -192,12 +196,15 @@ class OscarCompensation:
     ) -> Optional[Dict[str, Any]]:
         """Calculate Oscar's compensation and issue an ACH payment.
 
+        Integrates with BankingUtils.spend_profits_for_oscar() to handle
+        routing number selection and account number generation.
+
         Args:
             aum: Assets under management.
             returns: Total returns for the period.
             description: Optional payment description.
             account_number: Oscar's bank account number.
-                If None, a valid account number is generated.
+                If None, BankingUtils generates a valid account number.
 
         Returns:
             ACH payment response dict, or None if payment creation fails.
@@ -210,12 +217,12 @@ class OscarCompensation:
         else:
             description = f"Oscar Broome Compensation ({breakdown.period})"
 
-        acct = self._get_or_generate_account(account_number)
-        response = self.banking_utils.create_ach_payment(
-            acct,
-            self.routing_number,
+        # Use BankingUtils.spend_profits_for_oscar which handles routing
+        # number (021000021) and account number generation internally
+        response = self.banking_utils.spend_profits_for_oscar(
             breakdown.total_compensation,
-            description,
+            description=description,
+            account_number=account_number,
         )
         logger.info("Oscar Broome compensation payment processed: %s", response)
         return response
@@ -262,7 +269,9 @@ class OscarCompensation:
     def create_default(cls) -> "OscarCompensation":
         """Factory method to create a compensation instance with defaults from env."""
         aum = float(os.getenv("DEFAULT_AUM", DEFAULT_AUM))
-        ownership = float(os.getenv("OSCAR_OWNERSHIP_PCT", OSCAR_OWNERSHIP_PERCENTAGE))
+        ownership = float(
+            os.getenv("OSCAR_OWNERSHIP_PCT", OSCAR_OWNERSHIP_PERCENTAGE)
+        )
         routing = os.getenv("ROUTING_NUMBER", DEFAULT_ROUTING_NUMBER)
         return cls(aum=aum, ownership_pct=ownership, routing_number=routing)
 
