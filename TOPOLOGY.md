@@ -6,7 +6,7 @@ This document defines the complete topology and architecture of the Capetain
 Cetriva AI Hybrid Fund system, integrating AI-driven market analysis, NVIDIA
 GPU acceleration, banking operations, and financial allocation systems.
 
-<!-- markdownlint-disable MD013 MD060 -->
+<!-- markdownlint-disable MD013 -->
 
 ---
 
@@ -122,30 +122,30 @@ GPU acceleration, banking operations, and financial allocation systems.
 
 ### AUM Structure (Current)
 
-| Division               | Amount ($) | Percentage | Description                                    |
-| ---------------------- | ---------- | ---------- | ---------------------------------------------- |
-| Investment Fund        | 75M        | 50%        | Private equity, public markets, digital assets |
-| Banking Operations     | 30M        | 20%        | Loans, deposits, credit facilities             |
-| Wealth Management      | 30M        | 20%        | High-net-worth portfolios, trusts              |
-| Legal Protection (ESA) | 15M        | 10%        | Litigation funding, asset protection           |
-| **Total AUM**          | **$150M**  | **100%**   | Aggregate of all divisions                     |
+| Division | Amount ($) | Percentage | Description |
+| --- | --- | --- | --- |
+| Investment Fund | 75M | 50% | Private equity, public markets, digital assets |
+| Banking Operations | 30M | 20% | Loans, deposits, credit facilities |
+| Wealth Management | 30M | 20% | High-net-worth portfolios, trusts |
+| Legal Protection (ESA) | 15M | 10% | Litigation funding, asset protection |
+| **Total AUM** | **$150M** | **100%** | Aggregate of all divisions |
 
 ### Investment Allocation
 
-| Asset Class        | Allocation | Strategy                             |
-| ------------------ | ---------- | ------------------------------------ |
-| Alternative Assets | 60%        | Private Equity, Real Estate, Commod  |
-| Public Equities    | 30%        | AI-enhanced stock selection           |
-| Digital Assets     | 10%        | Blockchain-based investments          |
+| Asset Class | Allocation | Strategy |
+| --- | --- | --- |
+| Alternative Assets | 60% | Private Equity, Real Estate, Commod |
+| Public Equities | 30% | AI-enhanced stock selection |
+| Digital Assets | 10% | Blockchain-based investments |
 
 ### Sector Allocation (Investment Thesis)
 
-| Sector                | Percentage | Focus                    |
-| --------------------- | ---------- | ------------------------ |
-| Technology Disruption | 35%        | AI, Quantum, Blockchain  |
-| Real Assets           | 30%        | Real Estate, Commodities |
-| Private Growth Equity | 25%        | Tech Healthcare, Fintech |
-| Liquidity Reserve     | 10%        | Fixed Income, Cash       |
+| Sector | Percentage | Focus |
+| --- | --- | --- |
+| Technology Disruption | 35% | AI, Quantum, Blockchain |
+| Real Assets | 30% | Real Estate, Commodities |
+| Private Growth Equity | 25% | Tech Healthcare, Fintech |
+| Liquidity Reserve | 10% | Fixed Income, Cash |
 
 ---
 
@@ -246,27 +246,27 @@ GPU acceleration, banking operations, and financial allocation systems.
 
 ### Core Banking Modules
 
-| File                     | Function                     | Description                                      |
-| ------------------------ | ---------------------------- | ------------------------------------------------ |
+| File | Function | Description |
+| --- | --- | --- |
 | `generate_account_number.py` | `generate_account_number()` | Generate valid account numbers with Luhn checksum |
-| `get_routing_number.py`  | `get_routing_number()`       | Retrieve routing numbers with caching            |
-| `validate_routing_number.py` | `validate_routing_number()` | Validate ABA routing numbers                     |
-| `ach_payments.py`        | `create_payment()`          | Create ACH payments                              |
-| `plaid_integration.py`   | `create_link_token()`       | Plaid API integration                            |
+| `get_routing_number.py` | `get_routing_number()` | Retrieve routing numbers with caching |
+| `validate_routing_number.py` | `validate_routing_number()` | Validate ABA routing numbers |
+| `ach_payments.py` | `create_payment()` | Create ACH payments |
+| `plaid_integration.py` | `create_link_token()` | Plaid API integration |
 
 ### AI/ML Modules
 
-| File                                | Class/Function             | Description                            |
-| ----------------------------------- | -------------------------- | -------------------------------------- |
-| `nvidia_integration.py`             | `NVIDIAIntegration`        | GPU monitoring, Blackwell compatibility |
-| `ai_models/market_trend_analysis.py` | `MarketTrendAnalysis`      | Market prediction with PyTorch         |
-| `e2e_nvidia_blackwell_integration.py` | `E2ENVIDIAIntegration`     | Full E2E pipeline orchestration        |
+| File | Class/Function | Description |
+| --- | --- | --- |
+| `nvidia_integration.py` | `NVIDIAIntegration` | GPU monitoring, Blackwell compatibility |
+| `ai_models/market_trend_analysis.py` | `MarketTrendAnalysis` | Market prediction with PyTorch |
+| `e2e_nvidia_blackwell_integration.py` | `E2ENVIDIAIntegration` | Full E2E pipeline orchestration |
 
 ### Unified Banking Interface
 
-| File               | Class          | Methods                                                                        |
-| ------------------ | -------------- | ------------------------------------------------------------------------------ |
-| `banking_utils.py`  | `BankingUtils` | `generate_account()`, `get_routing()`, `validate_routing()`, `create_ach_payment()`, `spend_profits_for_oscar()`, `allocate_and_spend_profits()` |
+| File | Class | Methods |
+| --- | --- | --- |
+| `banking_utils.py` | `BankingUtils` | `generate_account()`, `get_routing()`, `validate_routing()`, `create_ach_payment()`, `spend_profits_for_oscar()`, `allocate_and_spend_profits()` |
 
 ---
 
@@ -356,7 +356,7 @@ flowchart TD
 ### Deployment Manifests
 
 | Manifest | Description |
-| ----------------------------------------------- | ---------------------------------------------------- |
+| --- | --- |
 | `docs/manifests/legacy-financial-app-vm.yaml` | Legacy app as a KubeVirt `VirtualMachine` |
 | `docs/manifests/financial-app-modern-deployment.yaml` | Modernized app as a container `Deployment` |
 | `docs/manifests/blackbox-modernization-argocd-app.yaml` | ArgoCD `Application` for GitOps sync |
