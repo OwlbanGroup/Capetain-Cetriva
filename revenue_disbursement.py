@@ -6,7 +6,7 @@ Capetain Cetriva AI Hybrid Fund.
 """
 
 import logging
-from typing import Dict, List, Optional, Any, TYPE_CHECKING
+from typing import Dict, List, Optional, Any, TYPE_CHECKING, ClassVar
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -41,13 +41,11 @@ class DisbursementBatch:
     """
 
     # Investment thesis allocation percentages (from corporate_breakdown.md)
-    ALLOCATION_PERCENTAGES: Dict[str, float] = field(
-        default_factory=lambda: {
-            "Alternative Assets": 0.60,
-            "Public Equities": 0.30,
-            "Digital Assets": 0.10,
-        }
-    )
+    ALLOCATION_PERCENTAGES: ClassVar[Dict[str, float]] = {
+        "Alternative Assets": 0.60,
+        "Public Equities": 0.30,
+        "Digital Assets": 0.10,
+    }
 
     batch_id: str
     description: str

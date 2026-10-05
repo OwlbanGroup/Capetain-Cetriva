@@ -19,8 +19,12 @@ try:
 except ImportError:  # pragma: no cover - plaid SDK optional in some environments
     PlaidIntegration = None  # type: ignore
 from ach_payments import ACHPayments
-from ai_models.market_trend_analysis import MarketTrendAnalysis
-from nvidia_integration import nvidia_integration
+if os.getenv("TESTING") != "1":
+    from ai_models.market_trend_analysis import MarketTrendAnalysis
+    from nvidia_integration import nvidia_integration
+else:
+    MarketTrendAnalysis = MagicMock()  # type: ignore
+    nvidia_integration = MagicMock()  # type: ignore
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
