@@ -193,6 +193,7 @@ class OscarCompensation:
         returns: float,
         description: str = "",
         account_number: Optional[str] = None,
+        period: str = "annual",
     ) -> Optional[Dict[str, Any]]:
         """Calculate Oscar's compensation and issue an ACH payment.
 
@@ -205,11 +206,12 @@ class OscarCompensation:
             description: Optional payment description.
             account_number: Oscar's bank account number.
                 If None, BankingUtils generates a valid account number.
+            period: Description of the compensation period.
 
         Returns:
             ACH payment response dict, or None if payment creation fails.
         """
-        breakdown = self.calculate_compensation(aum, returns)
+        breakdown = self.calculate_compensation(aum, returns, period)
         if description:
             description = (
                 f"{description} - Oscar Broome Compensation ({breakdown.period})"

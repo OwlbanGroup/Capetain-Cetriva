@@ -1,0 +1,67 @@
+test_compensation_history_tracked (test_oscar_compensation.TestCompensationCalculation)
+Each calculation should be added to history. ... ok
+test_ownership_percentage_applied (test_oscar_compensation.TestCompensationCalculation)
+Compensation should reflect ownership percentage. ... ok
+test_timestamp_set (test_oscar_compensation.TestCompensationCalculation)
+Each breakdown should have a timestamp. ... ok
+test_total_compensation_no_performance (test_oscar_compensation.TestCompensationCalculation)
+Compensation is just management fee when returns <= hurdle. ... ok
+test_total_compensation_with_performance (test_oscar_compensation.TestCompensationCalculation)
+Compensation includes both management and performance fees. ... ok
+test_default_aum (test_oscar_compensation.TestConstants) ... ok
+test_hurdle_rate (test_oscar_compensation.TestConstants) ... ok
+test_management_fee_rate (test_oscar_compensation.TestConstants) ... ok
+test_ownership_percentage (test_oscar_compensation.TestConstants) ... ok
+test_performance_fee_rate (test_oscar_compensation.TestConstants) ... ok
+test_routing_number (test_oscar_compensation.TestConstants) ... ok
+test_create_default_defaults (test_oscar_compensation.TestCreateDefault)
+create_default should use module defaults when env not set. ... ok
+test_create_default_with_env (test_oscar_compensation.TestCreateDefault)
+create_default should read AUM from environment. ... ok
+test_account_generation_failure (test_oscar_compensation.TestGetOrGenerateAccount)
+Should raise ValueError when account generation fails. ... ok
+test_generated_account (test_oscar_compensation.TestGetOrGenerateAccount)
+Should generate an account when none provided. ... ok
+test_provided_account (test_oscar_compensation.TestGetOrGenerateAccount)
+Should return the provided account number. ... ok
+test_management_fee_basic (test_oscar_compensation.TestManagementFeeCalculation)
+2% of AUM should be returned. ... ok
+test_management_fee_default_aum (test_oscar_compensation.TestManagementFeeCalculation)
+Management fee with default AUM. ... ok
+test_management_fee_negative_aum (test_oscar_compensation.TestManagementFeeCalculation)
+Negative AUM yields negative fee (edge case). ... ok
+test_management_fee_zero_aum (test_oscar_compensation.TestManagementFeeCalculation)
+Zero AUM yields zero fee. ... ok
+test_performance_fee_above_hurdle (test_oscar_compensation.TestPerformanceFeeCalculation)
+20% of returns above 8% hurdle should be returned. ... ok
+test_performance_fee_at_hurdle (test_oscar_compensation.TestPerformanceFeeCalculation)
+No performance fee when returns exactly equal hurdle. ... ok
+test_performance_fee_below_hurdle (test_oscar_compensation.TestPerformanceFeeCalculation)
+No performance fee when returns <= hurdle. ... ok
+test_performance_fee_large_returns (test_oscar_compensation.TestPerformanceFeeCalculation)
+Large returns yield proportionally large performance fee. ... ok
+test_performance_fee_negative_returns (test_oscar_compensation.TestPerformanceFeeCalculation)
+Negative returns yield zero performance fee. ... ok
+test_performance_fee_zero_returns (test_oscar_compensation.TestPerformanceFeeCalculation)
+Zero returns yield zero performance fee. ... ok
+test_process_compensation_no_description (test_oscar_compensation.TestProcessCompensation)
+process_compensation should generate description without input. ... ok
+test_process_compensation_payment_failure (test_oscar_compensation.TestProcessCompensation)
+process_compensation should handle ACH failure gracefully. ... ok
+test_process_compensation_spend_profits_integration (test_oscar_compensation.TestProcessCompensation)
+process_compensation should pass correct amount to spend_profits_for_oscar. ... ok
+test_process_compensation_with_mock (test_oscar_compensation.TestProcessCompensation)
+process_compensation should calculate and trigger ACH payment. ... ok
+test_empty_history (test_oscar_compensation.TestSummary)
+Summary should handle empty history gracefully. ... ok
+test_summary_with_filter (test_oscar_compensation.TestSummary)
+Summary should filter by period when provided. ... ok
+test_summary_with_records (test_oscar_compensation.TestSummary)
+Summary should display compensation records. ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 0.024s
+
+OK
+
+Tests: 33, Failures: 0, Errors: 0

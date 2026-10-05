@@ -49,6 +49,8 @@
   - Fund: 2% management fee, 20% performance fee
   - Banking: 1.5% asset servicing fee
   - Wealth: 1% AUM fee + performance bonuses
+  - Founder (Oscar Broome): 100% of fund management & performance fees
+    (see oscar_compensation.py for calculation and disbursement logic)
 
 ## Investment Strategy
 
@@ -281,6 +283,23 @@
 - Management Fees: 2% of AUM ($3M @ $150M)
 - Performance Fees: 20% above 8% hurdle
 - Projected Total Fees (2026): $22M (2% of $500M + performance)
+
+### Oscar Broome Founder Compensation
+
+Oscar Broome, owner of both Owlban Group and Capetain Cetriva, receives 100%
+of the fund fees. His compensation is calculated by the Oscar Compensation
+System (oscar_compensation.py):
+
+- Management Fee: 2% of Assets Under Management (AUM)
+- Performance Fee: 20% of returns exceeding the 8% annual hurdle rate
+- Total: Management Fee + Performance Fee (100% ownership)
+
+Example (Q2 2024: AUM=\, Returns=15%):
+- Management Fee: \,000,000 (2% x \)
+- Performance Fee: \,100,000 (20% x [\.5M - \ hurdle])
+- Total Compensation: \,100,000
+
+Compensation is disbursed via ACH through BankingUtils (routing 021000021).
 
 ## Risk Assessment
 

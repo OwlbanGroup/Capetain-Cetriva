@@ -6,11 +6,14 @@ Capetain Cetriva AI Hybrid Fund.
 """
 
 import logging
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, TYPE_CHECKING
 from dataclasses import dataclass, field
 from datetime import datetime
 
 from banking_utils import BankingUtils
+
+if TYPE_CHECKING:
+    from oscar_compensation import OscarCompensation  # noqa: F401
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,7 +35,20 @@ class DisbursementRecord:
 
 @dataclass
 class DisbursementBatch:
-    """Represents a batch of disbursements."""
+    """Represents a batch of disbursements.
+
+    Integrates with OscarCompensation for founder compensation disbursement.
+    """
+
+    # Investment thesis allocation percentages (from corporate_breakdown.md)
+    ALLOCATION_PERCENTAGES: Dict[str, float] = field(
+        default_factory=lambda: {
+            "Alternative Assets": 0.60,
+            "Public Equities": 0.30,
+            "Digital Assets": 0.10,
+        }
+    )
+
     batch_id: str
     description: str
     records: List[DisbursementRecord] = field(default_factory=list)
@@ -40,6 +56,8 @@ class DisbursementBatch:
     created_at: datetime = field(default_factory=datetime.now)
     completed_at: Optional[datetime] = None
     status: str = "created"
+    _disbursement_history: List[DisbursementRecord] = field(default_factory=list)
+    banking_utils: BankingUtils = field(default_factory=BankingUtils)
 
     def add_record(self, record: DisbursementRecord) -> None:
         """Add a disbursement record to the batch."""
@@ -55,6 +73,41 @@ class DisbursementBatch:
     def failed_count(self) -> int:
         """Count of failed disbursements."""
         return sum(1 for r in self.records if r.status == "failed")
+
+    def disburse_to_stakeholder(
+        self,
+        recipient: str,
+        amount: float,
+        description: str,
+        asset_class: Optional[str] = None,
+        routing_number: str = "021000021",
+    ) -> Optional[DisbursementRecord]:
+        """Disburse funds to a stakeholder via ACH payment."""
+        try:
+            account_number = self.banking_utils.generate_account()
+            if account_number is None:
+                logger.error(
+                    "Failed to generate account number for %s", recipient
+                )
+                return None
+            response = self.banking_utils.create_ach_payment(
+                account_number, routing_number, amount, description
+            )
+            record = DisbursementRecord(
+                recipient=recipient,
+                account_number=account_number,
+                routing_number=routing_number,
+                amount=amount,
+                description=description,
+                transaction_id=(response.get("transaction_id") if response else None),
+                status="completed" if response else "failed",
+                asset_class=asset_class,
+            )
+            self._disbursement_history.append(record)
+            return record
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("Error disbursing to %s: %s", recipient, e)
+            return None
 
     def allocate_and_disburse(
         self,
@@ -82,6 +135,41 @@ class DisbursementBatch:
                 logger.warning("Failed to allocate to %s", asset_class)
 
         return results
+
+    def allocate_oscar_compensation(
+        self,
+        aum: float,
+        returns: float,
+        description: str = "Oscar Broome Annual Compensation",
+        period: str = "annual",
+    ) -> Optional[Dict[str, Any]]:
+        """Calculate and disburse Oscar Broome's compensation.
+
+        Uses OscarCompensation to determine the management fee (2% of AUM)
+        and performance fee (20% of returns above 8% hurdle), then processes
+        an ACH payment via BankingUtils.
+
+        Args:
+            aum: Assets under management.
+            returns: Total returns for the period.
+            description: Payment description.
+            period: Description of the compensation period.
+
+        Returns:
+            Oscar Broome ACH payment response dict, or None on failure.
+        """
+        from oscar_compensation import OscarCompensation  # noqa: F811
+
+        oscar_comp = OscarCompensation(
+            banking_utils=self.banking_utils,
+            aum=aum,
+        )
+        return oscar_comp.process_compensation(
+            aum=aum,
+            returns=returns,
+            description=description,
+            period=period,
+        )
 
     def get_disbursement_history(
         self,
