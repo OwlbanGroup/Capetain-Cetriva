@@ -69,7 +69,7 @@ def main():
     print()
 
     start = time.perf_counter()
-    result = subprocess.run(cmd, env=env)
+    result = subprocess.run(cmd, env=env, check=False)
     elapsed = time.perf_counter() - start
 
     print(f"\nTests completed in {elapsed:.1f}s")

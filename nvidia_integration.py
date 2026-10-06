@@ -37,13 +37,13 @@ class NVIDIAIntegration:
                 "NVIDIA management library not installed; GPU monitoring limited."
             )
             return
-        
+
         # Skip NVML initialization in test environments
         if os.getenv('TESTING') == '1' or os.getenv('UNIT_TEST') == '1':
             self.nvml_available = False
             logger.debug("Skipping NVML initialization in test environment.")
             return
-        
+
         try:
             pynvml.nvmlInit()
             self.nvml_available = True

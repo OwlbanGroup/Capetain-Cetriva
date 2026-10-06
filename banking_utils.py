@@ -23,8 +23,8 @@ if os.getenv("TESTING") != "1":
     from ai_models.market_trend_analysis import MarketTrendAnalysis
     from nvidia_integration import nvidia_integration
 else:
-    MarketTrendAnalysis = MagicMock()  # type: ignore
-    nvidia_integration = MagicMock()  # type: ignore
+    MarketTrendAnalysis = MagicMock()  # type: ignore  # pylint: disable=invalid-name
+    nvidia_integration = MagicMock()  # type: ignore  # pylint: disable=invalid-name
     # In TESTING mode, use a MagicMock for ACHPayments to avoid real HTTP calls
     ACHPayments = MagicMock()  # type: ignore  # noqa: F811 # pylint: disable=invalid-name
 
@@ -65,7 +65,7 @@ class BankingUtils:
                 )
                 return None
             logger.info("Generated account number: %s", account_number)
-            return account_number
+            return account_number  # type: ignore[no-any-return]
         except ValueError as e:
             logger.error("Error generating account number: %s", e)
             return None
@@ -84,7 +84,7 @@ class BankingUtils:
         try:
             routing_number = get_routing_number(bank_name)
             logger.info("Retrieved routing number for %s: %s", bank_name, routing_number)
-            return routing_number
+            return routing_number  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error retrieving routing number for %s: %s", bank_name, e)
             return None
@@ -106,7 +106,7 @@ class BankingUtils:
                 "Routing number %s validation result: %s",
                 routing_number, is_valid
             )
-            return is_valid
+            return is_valid  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error validating routing number %s: %s", routing_number, e)
             return False
@@ -139,7 +139,7 @@ class BankingUtils:
                 description,
             )
             logger.info("ACH payment created: %s", response)
-            return response
+            return response  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error creating ACH payment: %s", e)
             return None
@@ -160,7 +160,7 @@ class BankingUtils:
         try:
             status = cls.ach_payments.get_payment_status(transaction_id)
             logger.info("ACH payment status: %s", status)
-            return status
+            return status  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error getting ACH payment status: %s", e)
             return None
@@ -179,7 +179,7 @@ class BankingUtils:
         try:
             response = cls.plaid_integration.create_link_token(user_id)
             logger.info("Plaid link token created: %s", response)
-            return response
+            return response  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error creating Plaid link token: %s", e)
             return None
@@ -198,7 +198,7 @@ class BankingUtils:
         try:
             response = cls.plaid_integration.exchange_public_token(public_token)
             logger.info("Plaid public token exchanged: %s", response)
-            return response
+            return response  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error exchanging Plaid public token: %s", e)
             return None
@@ -217,7 +217,7 @@ class BankingUtils:
         try:
             response = cls.plaid_integration.get_accounts(access_token)
             logger.info("Plaid accounts retrieved: %s", response)
-            return response
+            return response  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.error("Error retrieving Plaid accounts: %s", e)
             return None

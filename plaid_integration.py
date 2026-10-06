@@ -22,17 +22,17 @@ if os.getenv("TESTING") != "1":
 else:
     from unittest.mock import MagicMock
 
-    plaid_api = MagicMock()
-    Products = MagicMock()
-    CountryCode = MagicMock()
-    LinkTokenCreateRequest = MagicMock()
-    LinkTokenCreateRequestUser = MagicMock()
-    TransactionsGetRequest = MagicMock()
-    TransactionsGetRequestOptions = MagicMock()
-    ItemGetRequest = MagicMock()
-    ItemRemoveRequest = MagicMock()
-    ItemAccessTokenInvalidateRequest = MagicMock()
-    Configuration = MagicMock()
+    plaid_api = MagicMock()  # pylint: disable=invalid-name
+    Products = MagicMock()  # pylint: disable=invalid-name
+    CountryCode = MagicMock()  # pylint: disable=invalid-name
+    LinkTokenCreateRequest = MagicMock()  # pylint: disable=invalid-name
+    LinkTokenCreateRequestUser = MagicMock()  # pylint: disable=invalid-name
+    TransactionsGetRequest = MagicMock()  # pylint: disable=invalid-name
+    TransactionsGetRequestOptions = MagicMock()  # pylint: disable=invalid-name
+    ItemGetRequest = MagicMock()  # pylint: disable=invalid-name
+    ItemRemoveRequest = MagicMock()  # pylint: disable=invalid-name
+    ItemAccessTokenInvalidateRequest = MagicMock()  # pylint: disable=invalid-name
+    Configuration = MagicMock()  # pylint: disable=invalid-name
 logger = logging.getLogger(__name__)
 
 
@@ -73,7 +73,7 @@ class PlaidIntegration:
             )
             response = self.client.link_token_create(request)
             logger.info("Created link token for user %s", user_id)
-            return response.to_dict()
+            return response.to_dict()  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception("Plaid error creating link token: %s", e)
             return None
@@ -96,7 +96,7 @@ class PlaidIntegration:
         try:
             response = self.client.item_public_token_exchange(public_token)
             logger.info("Exchanged public token for access token")
-            return response.to_dict()
+            return response.to_dict()  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception("Plaid error exchanging public token: %s", e)
             return None
@@ -119,7 +119,7 @@ class PlaidIntegration:
         try:
             response = self.client.auth_get(access_token)
             logger.info("Retrieved accounts information")
-            return response.to_dict()
+            return response.to_dict()  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception("Plaid error retrieving accounts: %s", e)
             return None
@@ -157,7 +157,7 @@ class PlaidIntegration:
             )
             response = self.client.transactions_get(request)
             logger.info("Retrieved transactions information")
-            return response.to_dict()
+            return response.to_dict()  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception("Plaid error retrieving transactions: %s", e)
             return None
@@ -181,7 +181,7 @@ class PlaidIntegration:
             request = ItemGetRequest(access_token=access_token)
             response = self.client.item_get(request)
             logger.info("Retrieved item information")
-            return response.to_dict()
+            return response.to_dict()  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception("Plaid error retrieving item: %s", e)
             return None
@@ -205,7 +205,7 @@ class PlaidIntegration:
             request = ItemRemoveRequest(access_token=access_token)
             response = self.client.item_remove(request)
             logger.info("Removed item successfully")
-            return response.to_dict()
+            return response.to_dict()  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception("Plaid error removing item: %s", e)
             return None
@@ -229,7 +229,7 @@ class PlaidIntegration:
             request = ItemAccessTokenInvalidateRequest(access_token=access_token)
             response = self.client.item_access_token_invalidate(request)
             logger.info("Invalidated access token successfully")
-            return response.to_dict()
+            return response.to_dict()  # type: ignore[no-any-return]
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception("Plaid error invalidating access token: %s", e)
             return None

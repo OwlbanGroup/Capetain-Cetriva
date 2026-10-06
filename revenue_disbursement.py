@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class DisbursementRecord:
+class DisbursementRecord:  # pylint: disable=too-many-instance-attributes
     """Represents a single disbursement transaction record."""
     recipient: str
     account_number: str
@@ -34,7 +34,7 @@ class DisbursementRecord:
 
 
 @dataclass
-class DisbursementBatch:
+class DisbursementBatch:  # pylint: disable=too-many-instance-attributes
     """Represents a batch of disbursements.
 
     Integrates with OscarCompensation for founder compensation disbursement.
@@ -156,7 +156,8 @@ class DisbursementBatch:
         Returns:
             Oscar Broome ACH payment response dict, or None on failure.
         """
-        from oscar_compensation import OscarCompensation  # noqa: F811
+        from oscar_compensation import \
+            OscarCompensation  # noqa: F811  # pylint: disable=import-outside-toplevel
 
         oscar_comp = OscarCompensation(
             banking_utils=self.banking_utils,

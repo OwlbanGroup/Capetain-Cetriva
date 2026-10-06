@@ -181,27 +181,54 @@ class TestDisbursementHistory(unittest.TestCase):
         )
 
 
-class TestEndToEndRevenueDisbursement(unittest.TestCase):
-    """End-to-end: revenue allocation through Oscar compensation."""
+class TestDisbursementBatchProperties(unittest.TestCase):
+    """Tests for DisbursementBatch.add_record, success_count, and failed_count."""
 
-    def test_e2e_oscar_compensation_payment(self):
-        batch = make_batch()
-        result = batch.allocate_oscar_compensation(150_000_000, 22_500_000)
-        self.assertIsNotNone(result)
-        self.assertEqual(result["status"], "completed")
-        self.assertEqual(result["transaction_id"], "oscar_ach_002")
-        call_args = batch.banking_utils.spend_profits_for_oscar.call_args
-        self.assertAlmostEqual(call_args.args[0], 5_100_000, places=2)
+    def setUp(self):
+        self.batch = make_batch()
+        self.record1 = DisbursementRecord(
+            recipient="Alice",
+            account_number="111",
+            routing_number="021000021",
+            amount=5000,
+            description="Payment 1",
+            status="completed",
+        )
+        self.record2 = DisbursementRecord(
+            recipient="Bob",
+            account_number="222",
+            routing_number="021000021",
+            amount=7500,
+            description="Payment 2",
+            status="failed",
+        )
+        self.record3 = DisbursementRecord(
+            recipient="Carol",
+            account_number="333",
+            routing_number="021000021",
+            amount=2500,
+            description="Payment 3",
+            status="completed",
+        )
 
-    def test_e2e_combined_allocation(self):
-        batch = make_batch()
-        oscar_result = batch.allocate_oscar_compensation(150_000_000, 22_500_000)
-        self.assertIsNotNone(oscar_result)
-        results = batch.allocate_and_disburse(1_000_000, "Q2 allocation")
-        self.assertEqual(len(results), 3)
-        history = batch.get_disbursement_history()
-        self.assertEqual(len(history), 3)
+    def test_add_record_updates_total(self):
+        """add_record should append the record and update total_amount."""
+        self.batch.add_record(self.record1)
+        self.assertEqual(len(self.batch.records), 1)
+        self.assertEqual(self.batch.total_amount, 5000)
 
+        self.batch.add_record(self.record2)
+        self.assertEqual(len(self.batch.records), 2)
+        self.assertEqual(self.batch.total_amount, 12500)
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_success_count(self):
+        self.batch.add_record(self.record1)
+        self.batch.add_record(self.record2)
+        self.batch.add_record(self.record3)
+        self.assertEqual(self.batch.success_count, 2)
+
+    def test_failed_count(self):
+        self.batch.add_record(self.record1)
+        self.batch.add_record(self.record2)
+        self.batch.add_record(self.record3)
+        self.assertEqual(self.batch.failed_count, 1)

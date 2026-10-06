@@ -18,14 +18,14 @@ import time
 from typing import Any, Dict
 from unittest.mock import MagicMock
 
+from banking_utils import BankingUtils
+
 if os.getenv("TESTING") != "1":
     from ai_models.market_trend_analysis import MarketTrendAnalysis
     from nvidia_integration import nvidia_integration
 else:
-    nvidia_integration = MagicMock()
-    MarketTrendAnalysis = MagicMock()
-
-from banking_utils import BankingUtils
+    nvidia_integration = MagicMock()  # pylint: disable=invalid-name
+    MarketTrendAnalysis = MagicMock()  # pylint: disable=invalid-name
 
 # Configure logging
 logging.basicConfig(
