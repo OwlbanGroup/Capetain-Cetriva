@@ -233,6 +233,7 @@ class TestDisbursementBatchProperties(unittest.TestCase):
         self.batch.add_record(self.record3)
         self.assertEqual(self.batch.failed_count, 1)
 
+
 class TestDisburseExceptionAndEdgeCases(unittest.TestCase):
     """Test exception handling and edge cases."""
 

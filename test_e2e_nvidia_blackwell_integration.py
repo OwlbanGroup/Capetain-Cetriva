@@ -175,6 +175,7 @@ class TestSummaryPrinters(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
 class TestRunFullPipelineSuccess(unittest.TestCase):
     """Tests for successful run_full_pipeline."""
 

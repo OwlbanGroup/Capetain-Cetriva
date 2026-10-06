@@ -19,12 +19,6 @@ except ImportError:
         import nvidia_ml_py as pynvml  # type: ignore
     except ImportError:
         pynvml = None
-    import pynvml
-except ImportError:
-    try:
-        import nvidia_ml_py as pynvml
-    except ImportError:
-        pynvml = None
 
 logger = logging.getLogger(__name__)
 
@@ -146,4 +140,3 @@ class NVIDIAIntegration:
 
 # Singleton instance for global use
 nvidia_integration = NVIDIAIntegration()  # pylint: disable=invalid-name
-
