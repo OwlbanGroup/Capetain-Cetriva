@@ -1,14 +1,15 @@
 """Tests for test banking utils allocate profits."""
 
 import os
+
 os.environ.setdefault("TESTING", "1")
 os.environ.setdefault("PYTHONWARNINGS", "ignore")
 
 
-import unittest
+import unittest  # noqa: E402
+from unittest.mock import patch  # noqa: E402
 
-from unittest.mock import patch
-from banking_utils import BankingUtils
+from banking_utils import BankingUtils  # noqa: E402
 
 
 class TestAllocateAndSpendProfits(unittest.TestCase):

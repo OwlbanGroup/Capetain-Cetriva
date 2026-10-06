@@ -10,11 +10,9 @@ os.environ["TESTING"] = "1"
 import unittest  # noqa: E402
 from unittest.mock import MagicMock  # noqa: E402
 
-from oscar_compensation import (  # noqa: E402
-    OscarCompensation,
-    OSCAR_OWNERSHIP_PERCENTAGE,
-    DEFAULT_ROUTING_NUMBER,
-)
+from oscar_compensation import DEFAULT_ROUTING_NUMBER  # noqa: E402
+from oscar_compensation import OSCAR_OWNERSHIP_PERCENTAGE  # noqa: E402
+from oscar_compensation import OscarCompensation  # noqa: E402
 
 
 def make_comp(banking_utils=None):

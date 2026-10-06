@@ -1,7 +1,9 @@
 """Tests for test generate account number."""
 
 import unittest
-from generate_account_number import generate_account_number, is_valid_account_number
+
+from generate_account_number import (generate_account_number,
+                                     is_valid_account_number)
 
 
 class TestGenerateAccountNumber(unittest.TestCase):

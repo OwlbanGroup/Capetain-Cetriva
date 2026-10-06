@@ -5,10 +5,10 @@ import os
 os.environ.setdefault("TESTING", "1")
 os.environ.setdefault("PYTHONWARNINGS", "ignore")
 
-import unittest
-import time
+import time  # noqa: E402
+import unittest  # noqa: E402
 
-from banking_utils import BankingUtils
+from banking_utils import BankingUtils  # noqa: E402
 
 
 class TestPerformanceAndEdgeCases(unittest.TestCase):

@@ -1,6 +1,7 @@
-import coverage
-import unittest
 import sys
+import unittest
+
+import coverage
 
 
 def run_tests_with_coverage():

@@ -1,17 +1,19 @@
 """Tests for test banking utils."""
 
 import os
+
 os.environ.setdefault("TESTING", "1")
 os.environ.setdefault("PYTHONWARNINGS", "ignore")
 
+import unittest  # noqa: E402
+from unittest.mock import patch  # noqa: E402
 
-import unittest
-from unittest.mock import patch
-from banking_utils import BankingUtils
+from banking_utils import BankingUtils  # noqa: E402
 
 
 class TestBankingUtils(unittest.TestCase):
     """Test cases."""
+
     @patch('banking_utils.generate_account_number')
     @patch('banking_utils.is_valid_account_number')
     def test_generate_account_valid(self, mock_is_valid, mock_generate):
@@ -52,7 +54,7 @@ class TestBankingUtils(unittest.TestCase):
         result = BankingUtils.validate_routing('123456789')
         self.assertFalse(result)
 
-            @patch('banking_utils.BankingUtils.ach_payments')
+    @patch('banking_utils.BankingUtils.ach_payments')
     def test_create_ach_payment_success(self, mock_ach_payments):
         mock_ach_payments.create_payment.return_value = {'status': 'success'}
         response = BankingUtils.create_ach_payment('123', '456', 100.0, 'desc')

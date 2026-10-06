@@ -8,10 +8,11 @@ import logging
 from typing import Any, Dict, Optional, Union
 from unittest.mock import MagicMock
 
-from generate_account_number import generate_account_number, is_valid_account_number
+from ach_payments import ACHPayments
+from generate_account_number import (generate_account_number,
+                                     is_valid_account_number)
 from get_routing_number import get_routing_number
 from validate_routing_number import validate_routing_number
-from ach_payments import ACHPayments
 
 # Real or MagicMock depending on TESTING mode
 PlaidIntegration: Any

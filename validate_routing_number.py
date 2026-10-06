@@ -3,7 +3,6 @@
 import logging
 from typing import Union
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

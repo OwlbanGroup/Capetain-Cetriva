@@ -3,6 +3,7 @@
 Mocks BankingUtils module to avoid torch import overhead.
 """
 import os
+
 os.environ["TESTING"] = "1"
 
 import sys  # noqa: E402
@@ -10,14 +11,20 @@ import unittest  # noqa: E402
 from unittest.mock import MagicMock  # noqa: E402,F401
 
 # Mock banking_utils BEFORE importing revenue_disbursement to avoid torch
+# Save the original module reference to restore later
+_original_banking_utils = sys.modules.get("banking_utils")
+
 banking_utils_mock = MagicMock()
 banking_utils_mock.BankingUtils = MagicMock
 sys.modules["banking_utils"] = banking_utils_mock
 
-from revenue_disbursement import (  # noqa: E402,F401
-    DisbursementBatch,
-    DisbursementRecord,
-)
+from revenue_disbursement import DisbursementBatch  # noqa: E402,F401
+from revenue_disbursement import DisbursementRecord  # noqa: E402,F401
+
+# Restore the real banking_utils module so other test files can patch its
+# attributes correctly (e.g. test_banking_utils.py uses @patch decorators).
+if _original_banking_utils is not None:
+    sys.modules["banking_utils"] = _original_banking_utils
 
 
 def make_batch():

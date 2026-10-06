@@ -12,17 +12,17 @@ import time
 import numpy as np
 import pandas as pd
 import torch
+import yfinance as yf
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
-from torch import nn
-from torch import optim
+from torch import nn, optim
 from torch.utils.data import DataLoader, TensorDataset
-import yfinance as yf
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 # Local import requires the repo root on sys.path (added above).
-from nvidia_integration import nvidia_integration  # noqa: E402  # pylint: disable=wrong-import-position,import-error
+from nvidia_integration import \
+    nvidia_integration  # noqa: E402  # pylint: disable=wrong-import-position,import-error
 
 ADJ_CLOSE = "Adj Close"
 

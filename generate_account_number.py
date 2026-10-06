@@ -4,7 +4,6 @@ import logging
 import random
 from typing import List
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

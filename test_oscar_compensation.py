@@ -1,19 +1,14 @@
 """Tests for Oscar Broome compensation calculations and payment processing."""
 
 import unittest
-from unittest.mock import patch, MagicMock
 from datetime import datetime
+from unittest.mock import MagicMock, patch
 
-from oscar_compensation import (
-    OscarCompensation,
-    CompensationBreakdown,
-    MANAGEMENT_FEE_RATE,
-    PERFORMANCE_FEE_RATE,
-    HURDLE_RATE,
-    OSCAR_OWNERSHIP_PERCENTAGE,
-    DEFAULT_AUM,
-    DEFAULT_ROUTING_NUMBER,
-)
+from oscar_compensation import (DEFAULT_AUM, DEFAULT_ROUTING_NUMBER,
+                                HURDLE_RATE, MANAGEMENT_FEE_RATE,
+                                OSCAR_OWNERSHIP_PERCENTAGE,
+                                PERFORMANCE_FEE_RATE, CompensationBreakdown,
+                                OscarCompensation)
 
 
 def make_comp(aum=DEFAULT_AUM, ownership_pct=OSCAR_OWNERSHIP_PERCENTAGE):

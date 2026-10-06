@@ -6,7 +6,6 @@ import os
 import time
 from typing import Dict, Optional, TypedDict, cast
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

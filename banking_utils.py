@@ -25,10 +25,8 @@ if os.getenv("TESTING") != "1":
 else:
     MarketTrendAnalysis = MagicMock()  # type: ignore
     nvidia_integration = MagicMock()  # type: ignore
-
-# In TESTING mode, use a MagicMock for ACHPayments to avoid real HTTP calls
-if os.getenv("TESTING") == "1":
-    ACHPayments = MagicMock()  # type: ignore  # pylint: disable=invalid-name
+    # In TESTING mode, use a MagicMock for ACHPayments to avoid real HTTP calls
+    ACHPayments = MagicMock()  # type: ignore  # noqa: F811 # pylint: disable=invalid-name
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
