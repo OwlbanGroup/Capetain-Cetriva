@@ -174,3 +174,80 @@ class TestSummaryPrinters(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class TestRunFullPipelineSuccess(unittest.TestCase):
+    """Tests for successful run_full_pipeline."""
+
+    def setUp(self):
+        self.integrator = e2e.E2ENVIDIAIntegration()
+        self.integrator.nvidia = MagicMock()
+        self.integrator.initialize_system = MagicMock(return_value=True)
+        self.integrator.run_market_analysis = MagicMock(return_value={
+            "ticker": "NVDA",
+            "prediction": "Positive",
+            "data_points": 100,
+            "training_time": 2.5,
+            "model_trained": True,
+        })
+        self.integrator.execute_banking_operations = MagicMock(return_value={
+            "account": "123456789",
+            "routing": "021000021",
+            "total_profits": 50000.0,
+            "allocations": {"Alternative Assets": {"status": "success"}},
+        })
+
+    def test_successful_pipeline(self):
+        results = self.integrator.run_full_pipeline()
+        self.assertNotIn("error", results)
+        self.assertIn("market_analysis", results)
+        self.assertIn("banking_operations", results)
+        self.integrator.nvidia.log_project_status.assert_called_once()
+
+    def test_pipeline_logs_completion(self):
+        self.integrator.run_full_pipeline()
+        self.integrator.nvidia.log_project_status.assert_called_with(
+            "E2E Pipeline Completed"
+        )
+
+
+class TestShutdown(unittest.TestCase):
+    """Tests for shutdown method."""
+
+    def test_shutdown_calls_nvidia_shutdown(self):
+        integrator = e2e.E2ENVIDIAIntegration()
+        integrator.nvidia = MagicMock()
+        integrator.shutdown()
+        integrator.nvidia.shutdown.assert_called_once()
+
+
+class TestMainFunction(unittest.TestCase):
+    """Tests for the main() entry point."""
+
+    @patch("e2e_nvidia_blackwell_integration.E2ENVIDIAIntegration")
+    def test_main_success(self, mock_class):
+        instance = mock_class.return_value
+        instance.run_full_pipeline.return_value = {
+            "market_analysis": {"prediction": "Positive"},
+            "banking_operations": {"account": "123"},
+        }
+        e2e.main()
+        instance.run_full_pipeline.assert_called_once()
+        instance.shutdown.assert_called_once()
+
+    @patch("e2e_nvidia_blackwell_integration.E2ENVIDIAIntegration")
+    def test_main_pipeline_error(self, mock_class):
+        instance = mock_class.return_value
+        instance.run_full_pipeline.return_value = {"error": "GPU init failed"}
+        e2e.main()
+        instance.shutdown.assert_called_once()
+
+    @patch("e2e_nvidia_blackwell_integration.E2ENVIDIAIntegration")
+    def test_main_exception_handled(self, mock_class):
+        instance = mock_class.return_value
+        instance.run_full_pipeline.side_effect = Exception("Unexpected")
+        e2e.main()
+        instance.shutdown.assert_called_once()
+
+
+if __name__ == "__main__":
+    unittest.main()

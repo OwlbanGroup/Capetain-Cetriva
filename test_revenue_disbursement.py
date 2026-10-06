@@ -232,3 +232,126 @@ class TestDisbursementBatchProperties(unittest.TestCase):
         self.batch.add_record(self.record2)
         self.batch.add_record(self.record3)
         self.assertEqual(self.batch.failed_count, 1)
+
+class TestDisburseExceptionAndEdgeCases(unittest.TestCase):
+    """Test exception handling and edge cases."""
+
+    def test_disburse_exception_returns_none(self):
+        """If BankingUtils raises, return None."""
+        bu = MagicMock()
+        bu.generate_account.return_value = "987654321"
+        bu.create_ach_payment.side_effect = Exception("Gateway timeout")
+        batch = DisbursementBatch(
+            batch_id="BATCH-EXC",
+            description="Exception batch",
+            banking_utils=bu,
+        )
+        record = batch.disburse_to_stakeholder("Dave", 100_000, "Test")
+        self.assertIsNone(record)
+        self.assertFalse(batch._disbursement_history)
+
+    def test_disburse_account_generation_fails(self):
+        """When generate_account returns None, return None."""
+        bu = MagicMock()
+        bu.generate_account.return_value = None
+        batch = DisbursementBatch(
+            batch_id="BATCH-NO-ACCOUNT",
+            description="No account batch",
+            banking_utils=bu,
+        )
+        record = batch.disburse_to_stakeholder("Eve", 50_000, "Test")
+        self.assertIsNone(record)
+        self.assertFalse(batch.banking_utils.create_ach_payment.called)
+
+
+class TestAllocateAndDisburseFailure(unittest.TestCase):
+    """Test failure paths in allocate_and_disburse."""
+
+    def test_allocation_when_disburse_returns_none(self):
+        """If disburse_to_stakeholder fails, result is None for that key."""
+        bu = MagicMock()
+        bu.generate_account.return_value = None
+        batch = DisbursementBatch(
+            batch_id="BATCH-ALLOC-FAIL",
+            description="Allocation failure",
+            banking_utils=bu,
+        )
+        results = batch.allocate_and_disburse(1_000_000, "alloc")
+        self.assertEqual(len(results), 3)
+        for v in results.values():
+            self.assertIsNone(v)
+
+
+class TestDisbursementHistoryFilters(unittest.TestCase):
+    """Additional tests for get_disbursement_history with date filters."""
+
+    def setUp(self):
+        from datetime import datetime
+        self.batch = make_batch()
+        self.record1 = DisbursementRecord(
+            recipient="A",
+            account_number="111",
+            routing_number="021000021",
+            amount=10000,
+            description="test A",
+            status="completed",
+            asset_class="Alternative Assets",
+            timestamp=datetime(2024, 1, 15),
+        )
+        self.record2 = DisbursementRecord(
+            recipient="B",
+            account_number="222",
+            routing_number="021000021",
+            amount=20000,
+            description="test B",
+            status="completed",
+            asset_class="Digital Assets",
+            timestamp=datetime(2024, 6, 20),
+        )
+        self.batch._disbursement_history = [self.record1, self.record2]
+
+    def test_history_filter_by_start_date(self):
+        from datetime import datetime
+        history = self.batch.get_disbursement_history(
+            start_date=datetime(2024, 3, 1)
+        )
+        self.assertEqual(len(history), 1)
+        self.assertEqual(history[0].recipient, "B")
+
+    def test_history_filter_by_end_date(self):
+        from datetime import datetime
+        history = self.batch.get_disbursement_history(
+            end_date=datetime(2024, 3, 1)
+        )
+        self.assertEqual(len(history), 1)
+        self.assertEqual(history[0].recipient, "A")
+
+    def test_history_filter_no_match(self):
+        history = self.batch.get_disbursement_history(recipient="NonExistent")
+        self.assertEqual(history, [])
+
+
+class TestEndToEndRevenueDisbursement(unittest.TestCase):
+    """End-to-end: revenue allocation through Oscar compensation."""
+
+    def test_e2e_oscar_compensation_payment(self):
+        batch = make_batch()
+        result = batch.allocate_oscar_compensation(150_000_000, 22_500_000)
+        self.assertIsNotNone(result)
+        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["transaction_id"], "oscar_ach_002")
+        call_args = batch.banking_utils.spend_profits_for_oscar.call_args
+        self.assertAlmostEqual(call_args.args[0], 5_100_000, places=2)
+
+    def test_e2e_combined_allocation(self):
+        batch = make_batch()
+        oscar_result = batch.allocate_oscar_compensation(150_000_000, 22_500_000)
+        self.assertIsNotNone(oscar_result)
+        results = batch.allocate_and_disburse(1_000_000, "Q2 allocation")
+        self.assertEqual(len(results), 3)
+        history = batch.get_disbursement_history()
+        self.assertEqual(len(history), 3)
+
+
+if __name__ == "__main__":
+    unittest.main()
