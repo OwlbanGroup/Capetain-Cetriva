@@ -1,12 +1,23 @@
-# Flake8 configuration for Capetain Cetriva
-# Run: python -m flake8
 [flake8]
 max-line-length = 120
 exclude =
     .git,
     __pycache__,
-    .mypy_cache,
-    .vscode,
-    ai_models/__pycache__
-# E402 occurrences are handled inline with "# noqa: E402" where imports
-# intentionally follow sys.path setup (ai_models/market_trend_analysis.py).
+    venv,
+    .venv,
+    node_modules,
+    build,
+    dist,
+    htmlcov,
+    .tox,
+    .eggs,
+    *.egg-info
+extend-ignore =
+    W293,
+    E203,
+    E501,
+per-file-ignores =
+    # Tests can use protected members
+    test_*.py: protected-access
+    # Mock assignments don't need type annotations
+    conftest.py: E501

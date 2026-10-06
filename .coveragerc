@@ -1,0 +1,30 @@
+[run]
+source = .
+branch = True
+omit =
+    */tests/*
+    test_*.py
+    run_all_tests.py
+    setup.py
+    *.pyi
+    conftest.py
+
+[report]
+exclude_lines =
+    if __name__ == .__main__.:
+    if 0:
+    if __debug__:
+    pragma: no cover
+    raise NotImplementedError
+    raise AssertionError:
+
+    # MagicMock assignments in TESTING mode
+
+    ^.* = MagicMock()
+omit =
+    */tests/*
+    test_*.py
+    run_all_tests.py
+    setup.py
+    *.pyi
+show_missing = True

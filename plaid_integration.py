@@ -4,18 +4,35 @@ import logging
 import os
 from typing import Any, Dict, Optional
 
-from plaid.api import plaid_api
-from plaid.model.products import Products
-from plaid.model.country_code import CountryCode
-from plaid.model.link_token_create_request import LinkTokenCreateRequest
-from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
-from plaid.model.transactions_get_request import TransactionsGetRequest
-from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
-from plaid.model.item_get_request import ItemGetRequest
-from plaid.model.item_remove_request import ItemRemoveRequest
-from plaid.model.item_access_token_invalidate_request import ItemAccessTokenInvalidateRequest
-from plaid.configuration import Configuration
+if os.getenv("TESTING") != "1":
+    from plaid.api import plaid_api
+    from plaid.configuration import Configuration
+    from plaid.model.country_code import CountryCode
+    from plaid.model.item_access_token_invalidate_request import \
+        ItemAccessTokenInvalidateRequest
+    from plaid.model.item_get_request import ItemGetRequest
+    from plaid.model.item_remove_request import ItemRemoveRequest
+    from plaid.model.link_token_create_request import LinkTokenCreateRequest
+    from plaid.model.link_token_create_request_user import \
+        LinkTokenCreateRequestUser
+    from plaid.model.products import Products
+    from plaid.model.transactions_get_request import TransactionsGetRequest
+    from plaid.model.transactions_get_request_options import \
+        TransactionsGetRequestOptions
+else:
+    from unittest.mock import MagicMock
 
+    plaid_api = MagicMock()
+    Products = MagicMock()
+    CountryCode = MagicMock()
+    LinkTokenCreateRequest = MagicMock()
+    LinkTokenCreateRequestUser = MagicMock()
+    TransactionsGetRequest = MagicMock()
+    TransactionsGetRequestOptions = MagicMock()
+    ItemGetRequest = MagicMock()
+    ItemRemoveRequest = MagicMock()
+    ItemAccessTokenInvalidateRequest = MagicMock()
+    Configuration = MagicMock()
 logger = logging.getLogger(__name__)
 
 

@@ -385,4 +385,33 @@ Switch the deployment target between VM and container mode by changing the
 
 ---
 
-*This topology document was created as part of the Capetain Cetriva AI Hybrid Fund system architecture.*
+
+---
+
+## Oscar Compensation Flow Improvements
+
+### Period Parameter
+
+The period parameter in allocate_oscar_compensation() allows
+flexible allocation periods beyond the default annual calculation.
+
+**Supported period formats:**
+
+| Period | Description |
+| --- | --- |
+| annual (default) | Yearly compensation |
+| Q1 2024 | First quarter |
+| H1 2024 | First half |
+| semi-annual | Semi-annual generic |
+| monthly | Monthly |
+| custom | Any custom period |
+
+The period is included in ACH payment description.
+
+### Fee Structure
+
+- Management Fee: 2% of AUM
+- Performance Fee: 20% of returns above 8% hurdle rate
+- Ownership: 100% allocated to Oscar
+
+### Usage Examples

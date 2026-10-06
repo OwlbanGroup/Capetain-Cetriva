@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   lint:
-    name: Lint (flake8 + pylint)
+    name: Lint (flake8 + pylint + mypy)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -29,6 +29,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
+          pip install pytest-timeout pytest-cov
+
+      - name: Verify pytest plugins
+        run: |
+          python -c "import pytest_timeout; import pytest_cov; print('plugins installed')"
+
 
       - name: flake8
         run: python -m flake8 --count
@@ -40,6 +46,7 @@ jobs:
           plaid_integration.py nvidia_integration.py
           generate_account_number.py get_routing_number.py
           validate_routing_number.py e2e_nvidia_blackwell_integration.py
+          revenue_disbursement.py oscar_compensation.py
           run_all_tests.py
 
       - name: mypy (source modules)
@@ -49,6 +56,7 @@ jobs:
           plaid_integration.py nvidia_integration.py
           generate_account_number.py get_routing_number.py
           validate_routing_number.py e2e_nvidia_blackwell_integration.py
+          revenue_disbursement.py oscar_compensation.py
           run_all_tests.py
           --follow-imports=skip
 
@@ -56,6 +64,15 @@ jobs:
     name: Tests (pytest)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      matrix:
+        # Run full test suite with torch (slow but complete)
+        include:
+          - testing_mode: "full"
+            install_torch: "true"
+          # Run fast test suite without torch (TESTING=1 guard skips torch imports)
+          - testing_mode: "mocked"
+            install_torch: "false"
     steps:
       - uses: actions/checkout@v4
 
@@ -64,23 +81,49 @@ jobs:
           python-version: "3.10"
           cache: pip
 
-      - name: Install CPU-only PyTorch (much smaller than default wheel)
+      - name: Install PyTorch (CPU-only) when testing_mode is full
+        if: matrix.install_torch == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install torch --index-url https://download.pytorch.org/whl/cpu
 
-      - name: Install remaining dependencies
+      - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
-          pip install pytest
+          pip install pytest-timeout pytest-cov
 
-      - name: Run tests
+      - name: Verify pytest plugins
+        run: |
+          python -c "import pytest_timeout; import pytest_cov; print('plugins installed')"
+
+
+      - name: Run tests (full)
+        if: matrix.testing_mode == 'full'
         env:
           # Integration modules degrade gracefully without real credentials;
           # all external calls are mocked in the test suite.
           ACH_API_KEY: test-ci-key
-        run: python -m pytest -q --no-header
+        run: >-
+          python -m pytest -q --no-header --timeout=120
+          --cov=. --cov-report=xml --cov-report=term-missing
 
+      - name: Run tests (TESTING mode - fast, no torch)
+        if: matrix.testing_mode == 'mocked'
+        env:
+          ACH_API_KEY: test-ci-key
+          TESTING: "1"
+        run: python -m pytest -q --no-header --timeout=60
+
+
+      # Upload coverage XML (only generated in full mode; artifact name includes mode)
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.testing_mode }}
+          path: coverage.xml
+          retention-days: 14
   security:
     name: Security (pip-audit)
     runs-on: ubuntu-latest
