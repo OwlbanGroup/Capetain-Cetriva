@@ -13,11 +13,18 @@ Requirements: CUDA 12.4+, PyTorch, pynvml, and Blackwell-compatible hardware.
 """
 
 import logging
+import os
 import time
-from typing import Dict, Any
+from typing import Any, Dict
+from unittest.mock import MagicMock
 
-from nvidia_integration import nvidia_integration
-from ai_models.market_trend_analysis import MarketTrendAnalysis
+if os.getenv("TESTING") != "1":
+    from ai_models.market_trend_analysis import MarketTrendAnalysis
+    from nvidia_integration import nvidia_integration
+else:
+    nvidia_integration = MagicMock()
+    MarketTrendAnalysis = MagicMock()
+
 from banking_utils import BankingUtils
 
 # Configure logging

@@ -6,9 +6,9 @@ Capetain Cetriva AI Hybrid Fund.
 """
 
 import logging
-from typing import Dict, List, Optional, Any, TYPE_CHECKING, ClassVar
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
 
 from banking_utils import BankingUtils
 

@@ -3,22 +3,22 @@ Banking utilities module for handling account generation, routing, validation,
 ACH payments, and Plaid integrations.
 """
 
-import os
 import logging
+import os
+from typing import Any, Dict, Optional, Union
 from unittest.mock import MagicMock
-from typing import Optional, Dict, Any, Union
 
-from generate_account_number import (
-    generate_account_number,
-    is_valid_account_number,
-)
+from generate_account_number import (generate_account_number,
+                                     is_valid_account_number)
 from get_routing_number import get_routing_number
 from validate_routing_number import validate_routing_number
+
 try:
     from plaid_integration import PlaidIntegration
 except ImportError:  # pragma: no cover - plaid SDK optional in some environments
     PlaidIntegration = None  # type: ignore
 from ach_payments import ACHPayments
+
 if os.getenv("TESTING") != "1":
     from ai_models.market_trend_analysis import MarketTrendAnalysis
     from nvidia_integration import nvidia_integration
