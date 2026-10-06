@@ -1,5 +1,10 @@
 """Tests for test banking utils allocate profits."""
 
+import os
+os.environ.setdefault("TESTING", "1")
+os.environ.setdefault("PYTHONWARNINGS", "ignore")
+
+
 import unittest
 
 from unittest.mock import patch

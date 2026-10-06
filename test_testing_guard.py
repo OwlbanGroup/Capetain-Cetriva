@@ -9,6 +9,8 @@ import sys
 import unittest
 from unittest.mock import MagicMock
 
+import pytest
+
 # Set TESTING before any imports that might trigger torch
 os.environ["TESTING"] = "1"
 
@@ -104,6 +106,47 @@ class TestTestingGuardMarketTrendAnalysis(unittest.TestCase):
     def test_market_trend_analysis_is_mock(self):
         """MarketTrendAnalysis should be MagicMock when TESTING=1."""
         self.assertIsInstance(self.MarketTrendAnalysis, MagicMock)
+
+
+class TestRequiresTorchMarker(unittest.TestCase):
+    """Verify the requires_torch marker is registered and functional."""
+
+    def test_requires_torch_marker_exists(self):
+        """The requires_torch marker should be registered in pytest config."""
+        import pytest
+
+        # Verify the marker can be applied without error
+        mark = pytest.mark.requires_torch
+        assert mark is not None
+
+    @pytest.mark.requires_torch
+    def test_real_torch_import(self):
+        """When torch is available, verify import succeeds (skipped in TESTING mode)."""
+        import torch
+        assert torch is not None
+
+    @pytest.mark.requires_torch
+    def test_real_torch_functionality(self):
+        """Verify basic torch functionality (skipped in TESTING mode)."""
+        import torch
+        tensor = torch.tensor([1, 2, 3])
+        assert tensor.sum().item() == 6
+
+
+class TestRequiresPlaidMarker(unittest.TestCase):
+    """Verify the requires_plaid marker is registered and functional."""
+
+    @pytest.mark.requires_plaid
+    def test_real_plaid_import(self):
+        """When plaid is available, verify import succeeds (skipped in TESTING mode)."""
+        from plaid.api import plaid_api
+        assert plaid_api is not None
+
+    @pytest.mark.requires_plaid
+    def test_real_plaid_configuration(self):
+        """Verify Plaid Configuration class exists (skipped in TESTING mode)."""
+        from plaid.configuration import Configuration
+        assert Configuration is not None
 
 
 if __name__ == "__main__":

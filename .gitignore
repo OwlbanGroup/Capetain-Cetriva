@@ -27,3 +27,10 @@ out_test.txt
 
 # Auxly - AI Task Management (internal data)
 .auxly/
+
+
+# Coverage HTML reports
+htmlcov/
+
+# Scripts (shell files, not ignored but note in docs)
+scripts/__pycache__/

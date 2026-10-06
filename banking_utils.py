@@ -26,13 +26,16 @@ else:
     MarketTrendAnalysis = MagicMock()  # type: ignore
     nvidia_integration = MagicMock()  # type: ignore
 
+# In TESTING mode, use a MagicMock for ACHPayments to avoid real HTTP calls
+if os.getenv("TESTING") == "1":
+    ACHPayments = MagicMock()  # type: ignore  # pylint: disable=invalid-name
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class BankingUtils:
-    """
-    A utility class for banking operations including account generation,
+    """A utility class for banking operations including account generation,
     routing number retrieval, validation, ACH payments, and Plaid integrations.
     """
     # Patch PlaidIntegration to avoid real API calls during tests
@@ -42,7 +45,7 @@ class BankingUtils:
         else PlaidIntegration()
     )
 
-    ach_payments = ACHPayments()
+    ach_payments = ACHPayments() if os.getenv("TESTING") != "1" else MagicMock()  # type: ignore
 
     @staticmethod
     def generate_account(length: int = 9) -> Optional[str]:

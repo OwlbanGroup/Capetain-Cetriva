@@ -35,9 +35,8 @@ jobs:
         run: |
           python -c "import pytest_timeout; import pytest_cov; print('plugins installed')"
 
-
       - name: flake8
-        run: python -m flake8 --count
+        run: python -m flake8 --count --config=.flake8
 
       - name: pylint
         run: >
@@ -47,9 +46,11 @@ jobs:
           generate_account_number.py get_routing_number.py
           validate_routing_number.py e2e_nvidia_blackwell_integration.py
           revenue_disbursement.py oscar_compensation.py
-          run_all_tests.py
+          run_all_tests.py run_tests_fast.py
+          plaid_integration.pyi banking_utils.pyi
+          e2e_nvidia_blackwell_integration.pyi
 
-      - name: mypy (source modules)
+      - name: mypy (source modules + stubs)
         run: >
           python -m mypy
           account_routing_demo.py banking_utils.py ach_payments.py
@@ -57,7 +58,9 @@ jobs:
           generate_account_number.py get_routing_number.py
           validate_routing_number.py e2e_nvidia_blackwell_integration.py
           revenue_disbursement.py oscar_compensation.py
-          run_all_tests.py
+          run_all_tests.py run_tests_fast.py
+          plaid_integration.pyi banking_utils.pyi
+          e2e_nvidia_blackwell_integration.pyi
           --follow-imports=skip
 
   test:
@@ -97,7 +100,6 @@ jobs:
         run: |
           python -c "import pytest_timeout; import pytest_cov; print('plugins installed')"
 
-
       - name: Run tests (full)
         if: matrix.testing_mode == 'full'
         env:
@@ -105,15 +107,15 @@ jobs:
           # all external calls are mocked in the test suite.
           ACH_API_KEY: test-ci-key
         run: >-
-          python -m pytest -q --no-header --timeout=120
-          --cov=. --cov-report=xml --cov-report=term-missing
+          python -m pytest -q --no-header --tb=short --timeout=120
+          --cov=. --cov-config=.coveragerc --cov-report=xml --cov-report=term-missing --cov-report=html
 
       - name: Run tests (TESTING mode - fast, no torch)
         if: matrix.testing_mode == 'mocked'
         env:
           ACH_API_KEY: test-ci-key
           TESTING: "1"
-        run: python -m pytest -q --no-header --timeout=60
+        run: python -m pytest -q --no-header --tb=short --timeout=60 --cov-config=.coveragerc
 
 
       # Upload coverage XML (only generated in full mode; artifact name includes mode)
@@ -147,3 +149,15 @@ jobs:
 
       - name: Audit dependencies for known vulnerabilities
         run: python -m pip_audit
+
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run shellcheck
+        uses: ludeeus/setup-shellcheck@master
+        with:
+          scripts: scripts/

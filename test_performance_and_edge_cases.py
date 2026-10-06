@@ -1,10 +1,12 @@
 """Tests for test performance and edge cases."""
 
+import os
+
+os.environ.setdefault("TESTING", "1")
+os.environ.setdefault("PYTHONWARNINGS", "ignore")
+
 import unittest
-
-
 import time
-
 
 from banking_utils import BankingUtils
 

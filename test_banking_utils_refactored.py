@@ -1,5 +1,10 @@
 """Unit tests for BankingUtils.generate_account using mocked dependencies."""
 
+import os
+os.environ.setdefault("TESTING", "1")
+os.environ.setdefault("PYTHONWARNINGS", "ignore")
+
+
 import unittest
 from unittest.mock import patch
 

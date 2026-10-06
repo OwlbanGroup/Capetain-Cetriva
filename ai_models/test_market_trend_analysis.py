@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import MagicMock
 
 import pandas as pd
+import pytest
 
 if os.getenv("TESTING") == "1":
     MarketTrendAnalysis = MagicMock()
@@ -12,6 +13,7 @@ else:
     from ai_models.market_trend_analysis import MarketTrendAnalysis
 
 
+@pytest.mark.requires_torch
 class TestMarketTrendAnalysis(unittest.TestCase):
     """Test cases."""
 

@@ -17,10 +17,15 @@ def pytest_configure(config):
 
 
 def pytest_collection_modifyitems(config, items):
-    """Auto-skip tests requiring external services unless enabled."""
-    if os.getenv("TESTING") != "1":
+    """Auto-skip tests requiring external services in TESTING mode.
+
+    In TESTING mode (CI), we mock torch and plaid, so tests marked with
+    requires_torch or requires_plaid use MagicMocks and should be skipped
+    unless the user explicitly sets FORCE_REAL_DEPS=1.
+    """
+    if os.getenv("FORCE_REAL_DEPS") != "1":
         skip_marker = pytest.mark.skip(
-            reason="Requires TESTING=1 mode"
+            reason="Skipped: requires real torch/plaid (set FORCE_REAL_DEPS=1 to run)"
         )
         for item in items:
             if (

@@ -126,3 +126,19 @@ tox -e coverage           # coverage report
 
 - Open an issue for bugs or feature requests
 - Check existing issues before creating new ones
+
+
+### Git Hooks
+
+Install pre-commit hooks to run linters and tests on every commit:
+
+`ash
+scripts/setup_hooks.sh
+`
+
+This installs the pre-commit hook from hooks/pre-commit into your
+local .git/hooks directory. To bypass hooks in emergencies:
+
+`ash
+git commit --no-verify
+`
