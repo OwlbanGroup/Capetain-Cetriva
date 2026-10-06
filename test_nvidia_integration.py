@@ -1,7 +1,4 @@
-"""Create test file for nvidia_integration."""
-import os
-
-test_header = '''"""Tests for nvidia_integration.py."""
+"""Tests for nvidia_integration.py."""
 
 import os
 import unittest
@@ -20,15 +17,7 @@ def make_torch(cuda_available=False, cuda_version="11.8"):
     tm.__version__ = "2.0.0"
     tm.device.return_value = MagicMock()
     return tm
-'''
 
-with open('test_nvidia_integration.py', 'w') as f:
-    f.write(test_header)
-print("Header written")
-
-# Append TestNVIDIAInit class
-with open('test_nvidia_integration.py', 'a') as f:
-    f.write('''
 
 class TestNVIDIAInit(unittest.TestCase):
     """Test NVIDIAIntegration initialization."""
@@ -67,14 +56,8 @@ class TestNVIDIAInit(unittest.TestCase):
         self._patches.append(p)
         with patch("nvidia_integration.pynvml", None):
             ni = NVIDIAIntegration()
-        self.assertTrue(ni.gpu_available)
+                self.assertTrue(ni.gpu_available)
         self.assertFalse(ni.blackwell_compatible)
-''')
-print("TestNVIDIAInit added")
-
-# Append TestGetGpuInfo class
-with open('test_nvidia_integration.py', 'a') as f:
-    f.write('''
 
 
 class TestGetGpuInfo(unittest.TestCase):
@@ -115,12 +98,6 @@ class TestGetGpuInfo(unittest.TestCase):
                 ni.nvml_available = True
                 info = ni.get_gpu_info()
         self.assertNotIn("gpus", info)
-''')
-print("TestGetGpuInfo added")
-
-# Append TestAllocateGpuResources class
-with open('test_nvidia_integration.py', 'a') as f:
-    f.write('''
 
 
 class TestAllocateGpuResources(unittest.TestCase):
@@ -153,18 +130,12 @@ class TestAllocateGpuResources(unittest.TestCase):
                 ni.nvml_available = True
                 result = ni.allocate_gpu_resources(0)
         self.assertIsNone(result)
-''')
-print("TestAllocateGpuResources added")
-
-# Append TestShutdown and TestNvmlInit
-with open('test_nvidia_integration.py', 'a') as f:
-    f.write('''
 
 
 class TestShutdown(unittest.TestCase):
     """Test log_project_status and shutdown."""
 
-        def test_log_project_status(self):
+    def test_log_project_status(self):
         tm = make_torch(cuda_available=False)
         with patch("nvidia_integration.torch", tm):
             with patch("nvidia_integration.pynvml", None):
@@ -241,13 +212,3 @@ class TestNvmlInit(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-''')
-print("TestShutdown and TestNvmlInit added")
-
-
-
-
-
-
-
-

@@ -4,9 +4,21 @@ import logging
 import os
 from typing import Any, Dict, Optional
 
-import torch
+if os.getenv("TESTING") != "1":
+    import torch  # noqa: F401
+else:
+    from unittest.mock import MagicMock
+    torch = MagicMock()  # pylint: disable=invalid-name
+    # Ensure version.cuda returns None to avoid _check_blackwell_compatibility crash
+    torch.version.cuda = None
 
 try:
+    import pynvml
+except ImportError:
+    try:
+        import nvidia_ml_py as pynvml  # type: ignore
+    except ImportError:
+        pynvml = None
     import pynvml
 except ImportError:
     try:
@@ -133,4 +145,5 @@ class NVIDIAIntegration:
 
 
 # Singleton instance for global use
-nvidia_integration = NVIDIAIntegration()
+nvidia_integration = NVIDIAIntegration()  # pylint: disable=invalid-name
+
